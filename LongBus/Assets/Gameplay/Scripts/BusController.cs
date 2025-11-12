@@ -17,26 +17,26 @@ namespace PixmewStudios
 
         [Header("Jump & Physics")]
         [SerializeField] private float jumpForce = 12f;
-        [SerializeField] private float gravity = 30f; 
+        [SerializeField] private float gravity = 30f;
         [SerializeField] private LayerMask groundLayer;
-        [SerializeField] private float groundCheckOffset = 0.55f; 
+        [SerializeField] private float groundCheckOffset = 0.55f;
 
         [Header("Visual Effects")]
-        [Tooltip("How much the bus tilts Left/Right when turning (Banking).")]
-        [SerializeField] private float maxLeanAngle = 15f; 
-        [SerializeField] private float leanSpeed = 5f;
-        [Tooltip("How much the nose points Up/Down when jumping (Dolphin Effect).")]
-        [SerializeField] private float dolphinPitchStrength = 3f; // New Variable
+        [Tooltip("Defines the Ease: X-Axis is normalized velocity (-1 is falling fast, 1 is jumping up). Y-Axis is the Pitch influence.")]
+        [SerializeField] private AnimationCurve dolphinPitchCurve = new AnimationCurve(new Keyframe(-1, 1), new Keyframe(0, 0), new Keyframe(1, -1));
+        
+        [Tooltip("The maximum angle (in degrees) the nose will pitch up or down.")]
+        [SerializeField] private float maxPitchAngle = 45f; 
 
         [Header("Body Settings")]
         [SerializeField] private GameObject busSegmentPrefab;
         [SerializeField] private float segmentGap = 1.5f;
-        
+
         // --- Internal Variables ---
         private List<Vector3> pathPositions = new List<Vector3>();
         private List<Quaternion> pathRotations = new List<Quaternion>();
         private List<Transform> busSegments = new List<Transform>();
-        
+
         private BusControls inputActions;
         private Vector2 moveInput;
         private bool isBoosting = false;
@@ -46,7 +46,7 @@ namespace PixmewStudios
         // Physics State
         private float verticalVelocity;
         private bool isGrounded;
-        private RaycastHit groundHit; 
+        private RaycastHit groundHit;
 
         private void Awake()
         {
@@ -62,14 +62,17 @@ namespace PixmewStudios
             pathPositions.Add(transform.position);
             pathRotations.Add(transform.rotation);
 
-            var camTransform = Camera.main.transform.parent;
-            if (camTransform != null) cameraController = camTransform.GetComponent<CameraController>();
+            // Safety check for Camera
+            if (Camera.main != null && Camera.main.transform.parent != null)
+            {
+                cameraController = Camera.main.transform.parent.GetComponent<CameraController>();
+            }
         }
 
         private void OnEnable() => inputActions.BusControlsActionMap.Enable();
         private void OnDisable() => inputActions.BusControlsActionMap.Disable();
 
-        private void FixedUpdate()
+        private void LateUpdate()
         {
             CheckGround();
             HandleHeadMovement();
@@ -107,58 +110,58 @@ namespace PixmewStudios
                 targetLookRotation = Quaternion.LookRotation(moveDirection);
             }
 
-            // B. Banking (Z-Axis) - Leaning into turns
-            float targetBankAngle = -moveInput.x * maxLeanAngle;
-            Quaternion bankRotation = Quaternion.Euler(0, 0, targetBankAngle);
-
-            // C. Dolphin Pitch (X-Axis) - Looking up/down based on jump
+            // C. Dolphin Pitch (X-Axis) - EDITED FOR CURVE CONTROL
             float targetPitchAngle = 0f;
+            
             if (!isGrounded)
             {
-                // -verticalVelocity means: Positive Velocity (Going Up) = Negative Angle (Nose Up)
-                targetPitchAngle = -verticalVelocity * dolphinPitchStrength;
-                
-                // Clamp it so we don't do a backflip (limit to 45 degrees up/down)
-                targetPitchAngle = Mathf.Clamp(targetPitchAngle, -45f, 45f);
+                // 1. Normalize velocity. 
+                // +1 means we are moving up at full Jump Force. 
+                // -1 means we are falling down at full Jump Force speed (or faster).
+                float velocityRatio = Mathf.Clamp(verticalVelocity / jumpForce, -1.5f, 1.5f);
+
+                // 2. Evaluate the curve. 
+                // You define in Inspector how "Velocity Ratio" translates to "Pitch Percentage".
+                float curveValue = dolphinPitchCurve.Evaluate(velocityRatio);
+
+                // 3. Apply the max angle
+                targetPitchAngle = curveValue * maxPitchAngle;
             }
+            
             Quaternion pitchRotation = Quaternion.Euler(targetPitchAngle, 0, 0);
 
             // D. Combine All Rotations
-            // Order: Look (Direction) -> Pitch (Up/Down) -> Bank (Tilt)
-            Quaternion finalTargetRotation = targetLookRotation * pitchRotation * bankRotation;
+            // Order: Look (Direction) -> Pitch (Up/Down)
+            Quaternion finalTargetRotation = targetLookRotation * pitchRotation;
 
             // Smoothly rotate towards the final result
-            transform.rotation = Quaternion.Slerp(transform.rotation, finalTargetRotation, leanSpeed * Time.fixedDeltaTime);
+            transform.rotation = Quaternion.Slerp(transform.rotation, finalTargetRotation, rotationSpeed * Time.deltaTime);
 
 
             // --- 2. PHYSICS & GROUND SNAPPING ---
             if (isGrounded && verticalVelocity <= 0)
             {
-                verticalVelocity = 0; 
+                verticalVelocity = 0;
                 Vector3 snappedPos = transform.position;
                 snappedPos.y = groundHit.point.y + groundCheckOffset;
                 transform.position = snappedPos;
             }
             else
             {
-                verticalVelocity -= gravity * Time.fixedDeltaTime;
+                verticalVelocity -= gravity * Time.deltaTime;
             }
 
             // --- 3. APPLY MOVEMENT ---
             Vector3 forwardMovement = transform.forward;
-            
-            // IMPORTANT: When dolphin pitching, 'forward' points up/down. 
-            // We must Flatten it for movement calculation so speed is consistent over ground.
-            // However, keeping a little bit of the Y component makes the jump look like it follows the nose!
-            // Let's flatten it completely for gameplay control stability:
-            forwardMovement.y = 0; 
-            
+
+            // Flatten forward vector so speed is consistent regardless of pitch
+            forwardMovement.y = 0;
             forwardMovement.Normalize();
             forwardMovement *= moveSpeed;
 
             Vector3 verticalMovement = Vector3.up * verticalVelocity;
 
-            transform.position += (forwardMovement + verticalMovement) * Time.fixedDeltaTime;
+            transform.position += (forwardMovement + verticalMovement) * Time.deltaTime;
         }
 
         #endregion
@@ -168,7 +171,7 @@ namespace PixmewStudios
         private void RecordPath()
         {
             float distSqr = (pathPositions.Count > 0) ? (pathPositions[0] - transform.position).sqrMagnitude : 1f;
-            if (distSqr > 0.0001f) 
+            if (distSqr > 0.0001f)
             {
                 pathPositions.Insert(0, transform.position);
                 pathRotations.Insert(0, transform.rotation);
@@ -178,7 +181,7 @@ namespace PixmewStudios
         private void MoveBodySegments()
         {
             float totalDistanceNeeded = 0f;
-            int maxIndexUsed = 0; 
+            int maxIndexUsed = 0;
 
             for (int i = 1; i < busSegments.Count; i++)
             {
@@ -212,11 +215,11 @@ namespace PixmewStudios
                     float t = remainingDist / distBetweenPoints;
                     segment.position = Vector3.Lerp(pointA, pointB, t);
                     segment.rotation = Quaternion.Slerp(pathRotations[i], pathRotations[i + 1], t);
-                    return i; 
+                    return i;
                 }
                 currentDistTraveled += distBetweenPoints;
             }
-            
+
             if (pathPositions.Count > 0)
             {
                 segment.position = pathPositions.Last();
@@ -236,14 +239,14 @@ namespace PixmewStudios
             isBoosting = true;
             speedTween?.Kill();
             speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, boostedmoveSpeed, boostRampDuration).SetEase(Ease.InOutQuad);
-            if(cameraController != null) cameraController.StartContinuousShake();
+            if (cameraController != null) cameraController.StartContinuousShake();
         }
 
         private void StopBoost()
         {
             speedTween?.Kill();
             speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, normalmoveSpeed, boostRampDuration).SetEase(Ease.OutQuad)
-                .OnComplete(() => { if(cameraController != null) cameraController.StopShake(); isBoosting = false; });
+                .OnComplete(() => { if (cameraController != null) cameraController.StopShake(); isBoosting = false; });
         }
 
         public void AddBusSegment()
