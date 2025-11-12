@@ -17,31 +17,28 @@ namespace PixmewStudios
 
         [Header("Jump & Physics")]
         [SerializeField] private float jumpForce = 12f;
-        [SerializeField] private float gravity = 30f; // Snappier gravity for arcade feel
+        [SerializeField] private float gravity = 30f; 
         [SerializeField] private LayerMask groundLayer;
-        [Tooltip("Distance from center of object to the floor. 0.5 for a 1m tall cube.")]
         [SerializeField] private float groundCheckOffset = 0.55f; 
 
-        [Header("Visual Effects (Banking)")]
+        [Header("Visual Effects")]
+        [Tooltip("How much the bus tilts Left/Right when turning (Banking).")]
         [SerializeField] private float maxLeanAngle = 15f; 
         [SerializeField] private float leanSpeed = 5f;
+        [Tooltip("How much the nose points Up/Down when jumping (Dolphin Effect).")]
+        [SerializeField] private float dolphinPitchStrength = 3f; // New Variable
 
         [Header("Body Settings")]
         [SerializeField] private GameObject busSegmentPrefab;
-        [Tooltip("Distance between segments along the path.")]
         [SerializeField] private float segmentGap = 1.5f;
         
         // --- Internal Variables ---
-
-        // Path History ("Breadcrumbs")
         private List<Vector3> pathPositions = new List<Vector3>();
         private List<Quaternion> pathRotations = new List<Quaternion>();
-
         private List<Transform> busSegments = new List<Transform>();
+        
         private BusControls inputActions;
         private Vector2 moveInput;
-        
-        // Boost State
         private bool isBoosting = false;
         private Tween speedTween;
         private CameraController cameraController;
@@ -49,11 +46,10 @@ namespace PixmewStudios
         // Physics State
         private float verticalVelocity;
         private bool isGrounded;
-        private RaycastHit groundHit; // Stores exactly where the floor is
+        private RaycastHit groundHit; 
 
         private void Awake()
         {
-            // Input Setup
             inputActions = new BusControls();
             inputActions.BusControlsActionMap.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
             inputActions.BusControlsActionMap.Move.canceled += ctx => moveInput = Vector2.zero;
@@ -62,14 +58,10 @@ namespace PixmewStudios
             inputActions.BusControlsActionMap.BoostSpeed.canceled += boostlogic => StopBoost();
             inputActions.BusControlsActionMap.Jump.performed += jump => Jump();
 
-            // Initialize List
             busSegments.Add(this.transform);
-            
-            // Initialize Path
             pathPositions.Add(transform.position);
             pathRotations.Add(transform.rotation);
 
-            // Find Camera (Optional safety check)
             var camTransform = Camera.main.transform.parent;
             if (camTransform != null) cameraController = camTransform.GetComponent<CameraController>();
         }
@@ -89,8 +81,6 @@ namespace PixmewStudios
 
         private void CheckGround()
         {
-            // Raycast down to find the floor. 
-            // We add a small buffer (+0.2f) so we detect the ground slightly before hitting it.
             isGrounded = Physics.Raycast(transform.position, Vector3.down, out groundHit, groundCheckOffset + 0.2f, groundLayer);
         }
 
@@ -100,8 +90,6 @@ namespace PixmewStudios
             {
                 verticalVelocity = jumpForce;
                 isGrounded = false;
-                
-                // Nudge up slightly so we don't immediately snap back to ground in the next frame
                 transform.position += Vector3.up * 0.1f;
             }
         }
@@ -110,42 +98,61 @@ namespace PixmewStudios
         {
             Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y).normalized;
 
-            // --- 1. Rotation & Banking ---
+            // --- 1. CALCULATE ROTATIONS ---
+
+            // A. Look Direction (Y-Axis)
             Quaternion targetLookRotation = transform.rotation;
             if (moveDirection.magnitude >= 0.1f)
             {
                 targetLookRotation = Quaternion.LookRotation(moveDirection);
             }
 
-            // Calculate Bank (Lean) Angle
-            float targetLeanAngle = -moveInput.x * maxLeanAngle;
-            Quaternion leanRotation = Quaternion.Euler(0, 0, targetLeanAngle);
-            
-            // Apply smoothed rotation
-            Quaternion finalTargetRotation = targetLookRotation * leanRotation;
+            // B. Banking (Z-Axis) - Leaning into turns
+            float targetBankAngle = -moveInput.x * maxLeanAngle;
+            Quaternion bankRotation = Quaternion.Euler(0, 0, targetBankAngle);
+
+            // C. Dolphin Pitch (X-Axis) - Looking up/down based on jump
+            float targetPitchAngle = 0f;
+            if (!isGrounded)
+            {
+                // -verticalVelocity means: Positive Velocity (Going Up) = Negative Angle (Nose Up)
+                targetPitchAngle = -verticalVelocity * dolphinPitchStrength;
+                
+                // Clamp it so we don't do a backflip (limit to 45 degrees up/down)
+                targetPitchAngle = Mathf.Clamp(targetPitchAngle, -45f, 45f);
+            }
+            Quaternion pitchRotation = Quaternion.Euler(targetPitchAngle, 0, 0);
+
+            // D. Combine All Rotations
+            // Order: Look (Direction) -> Pitch (Up/Down) -> Bank (Tilt)
+            Quaternion finalTargetRotation = targetLookRotation * pitchRotation * bankRotation;
+
+            // Smoothly rotate towards the final result
             transform.rotation = Quaternion.Slerp(transform.rotation, finalTargetRotation, leanSpeed * Time.fixedDeltaTime);
 
-            // --- 2. Physics & Ground Snapping ---
-            
-            // If we are grounded and NOT moving upwards (jumping)
+
+            // --- 2. PHYSICS & GROUND SNAPPING ---
             if (isGrounded && verticalVelocity <= 0)
             {
                 verticalVelocity = 0; 
-                
-                // SNAP to the floor height to prevent falling through or floating
                 Vector3 snappedPos = transform.position;
                 snappedPos.y = groundHit.point.y + groundCheckOffset;
                 transform.position = snappedPos;
             }
             else
             {
-                // Apply Gravity
                 verticalVelocity -= gravity * Time.fixedDeltaTime;
             }
 
-            // --- 3. Final Translation ---
+            // --- 3. APPLY MOVEMENT ---
             Vector3 forwardMovement = transform.forward;
-            forwardMovement.y = 0; // Flatten forward vector so looking up/down doesn't affect speed
+            
+            // IMPORTANT: When dolphin pitching, 'forward' points up/down. 
+            // We must Flatten it for movement calculation so speed is consistent over ground.
+            // However, keeping a little bit of the Y component makes the jump look like it follows the nose!
+            // Let's flatten it completely for gameplay control stability:
+            forwardMovement.y = 0; 
+            
             forwardMovement.Normalize();
             forwardMovement *= moveSpeed;
 
@@ -156,14 +163,11 @@ namespace PixmewStudios
 
         #endregion
 
-        #region Path Logic (The Snake Effect)
+        #region Path Logic
 
         private void RecordPath()
         {
-            // Optimization: Check squared distance to avoid expensive Sqrt calculations
             float distSqr = (pathPositions.Count > 0) ? (pathPositions[0] - transform.position).sqrMagnitude : 1f;
-            
-            // Only record if we moved slightly (prevents duplicate points when idle)
             if (distSqr > 0.0001f) 
             {
                 pathPositions.Insert(0, transform.position);
@@ -174,21 +178,15 @@ namespace PixmewStudios
         private void MoveBodySegments()
         {
             float totalDistanceNeeded = 0f;
-            int maxIndexUsed = 0; // Track how much history we actually need
+            int maxIndexUsed = 0; 
 
             for (int i = 1; i < busSegments.Count; i++)
             {
                 totalDistanceNeeded += segmentGap;
-                
-                // Move the segment and get back the index of the path it used
                 int usedIndex = SetSegmentToPathDistance(busSegments[i], totalDistanceNeeded);
-                
                 if (usedIndex > maxIndexUsed) maxIndexUsed = usedIndex;
             }
 
-            // --- Dynamic Cleanup ---
-            // Remove history points that are older than the last segment needs
-            // We keep a buffer of 5 points to prevent jitter
             int trimThreshold = maxIndexUsed + 5;
             if (pathPositions.Count > trimThreshold)
             {
@@ -202,30 +200,23 @@ namespace PixmewStudios
         {
             float currentDistTraveled = 0f;
 
-            // Search through the breadcrumbs to find where this segment belongs
             for (int i = 0; i < pathPositions.Count - 1; i++)
             {
                 Vector3 pointA = pathPositions[i];
                 Vector3 pointB = pathPositions[i + 1];
-                
                 float distBetweenPoints = Vector3.Distance(pointA, pointB);
 
                 if (currentDistTraveled + distBetweenPoints >= requiredDist)
                 {
-                    // We found the spot between Point A and Point B
                     float remainingDist = requiredDist - currentDistTraveled;
                     float t = remainingDist / distBetweenPoints;
-
                     segment.position = Vector3.Lerp(pointA, pointB, t);
                     segment.rotation = Quaternion.Slerp(pathRotations[i], pathRotations[i + 1], t);
-                    
-                    return i; // Return the index used
+                    return i; 
                 }
-
                 currentDistTraveled += distBetweenPoints;
             }
             
-            // Fallback: If path is too short (start of game), stack at the end
             if (pathPositions.Count > 0)
             {
                 segment.position = pathPositions.Last();
@@ -244,37 +235,27 @@ namespace PixmewStudios
             if (isBoosting) return;
             isBoosting = true;
             speedTween?.Kill();
-            speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, boostedmoveSpeed, boostRampDuration)
-                .SetEase(Ease.InOutQuad);
-            
+            speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, boostedmoveSpeed, boostRampDuration).SetEase(Ease.InOutQuad);
             if(cameraController != null) cameraController.StartContinuousShake();
         }
 
         private void StopBoost()
         {
             speedTween?.Kill();
-            speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, normalmoveSpeed, boostRampDuration)
-                .SetEase(Ease.OutQuad)
-                .OnComplete(() =>
-                {
-                    if(cameraController != null) cameraController.StopShake();
-                    isBoosting = false;
-                });
+            speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, normalmoveSpeed, boostRampDuration).SetEase(Ease.OutQuad)
+                .OnComplete(() => { if(cameraController != null) cameraController.StopShake(); isBoosting = false; });
         }
 
         public void AddBusSegment()
         {
             if (busSegmentPrefab == null) return;
-
             Transform lastSegment = busSegments.Last();
-            // Spawn at last segment position; path logic will correct it instantly in Update
             GameObject newSegment = Instantiate(busSegmentPrefab, lastSegment.position, lastSegment.rotation);
             busSegments.Add(newSegment.transform);
         }
 
         #endregion
 
-        // Visual Debugging
         private void OnDrawGizmos()
         {
             Gizmos.color = isGrounded ? Color.green : Color.red;
