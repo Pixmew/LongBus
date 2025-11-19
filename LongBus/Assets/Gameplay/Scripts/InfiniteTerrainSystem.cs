@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace PixmewStudios
 {
-    
+
     public class InfiniteTerrainSystem : MonoBehaviour
     {
         [Header("Seed Settings")]
@@ -97,7 +97,7 @@ namespace PixmewStudios
             // This ensures that every time we ask this specific "prng" for a number, it gives the same result.
             System.Random prng = new System.Random(coordinateHash);
 
-            // 3. Pick a random prefab from the list
+            // 3. Pick a random prefab from the  list
             int prefabIndex = prng.Next(0, chunkPrefabs.Length);
             GameObject prefabToSpawn = chunkPrefabs[prefabIndex];
 

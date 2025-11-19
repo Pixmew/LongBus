@@ -356,12 +356,12 @@ MonoBehaviour:
   worldSeed: 12345
   playerTransform: {fileID: 1006541066}
   chunkSize: 90
-  drawDistance: 3
+  drawDistance: 1
   chunkPrefabs:
   - {fileID: 8183472384827246089, guid: cba9df730746a1a4e824c217ef72b4a4, type: 3}
   - {fileID: 1562250357443938198, guid: 3965ad87baf6da24faffad3932809489, type: 3}
-  - {fileID: 1447512412364249120, guid: 3adc08f730122dc4f89d544f2ba014de, type: 3}
-  worldContainer: {fileID: 0}
+  - {fileID: 604052026719493995, guid: b16a22f32fef9b844915ab0620ae17ba, type: 3}
+  worldContainer: {fileID: 1023776328}
 --- !u!4 &1023776328
 Transform:
   m_ObjectHideFlags: 0
