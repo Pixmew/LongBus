@@ -439,6 +439,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 341645207387522217, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_UseGravity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 341645207387522217, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsKinematic
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2459341578080360472, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -484,56 +492,16 @@ PrefabInstance:
       value: BusHead
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: gravity
-      value: 30
+      propertyPath: safeSegmentCount
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: jumpForce
-      value: 15
+      propertyPath: passengersPerSegment
+      value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: leanSpeed
-      value: 10
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: moveSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: segmentGap
-      value: 4.6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: maxLeanAngle
-      value: 30
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: bodyTurnSpeed
-      value: 100
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: rotationSpeed
-      value: 3
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: normalmoveSpeed
-      value: 20
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: boostedmoveSpeed
-      value: 40
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: busSegmentPrefab
-      value: 
-      objectReference: {fileID: 5131991916627742487, guid: c345583723eea6f45bb14aa8ca4b03f1, type: 3}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: groundLayer.m_Bits
-      value: 64
-      objectReference: {fileID: 0}
-    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: dolphinPitchStrength
-      value: 10
+    - target: {fileID: 7822436748943007387, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsTrigger
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

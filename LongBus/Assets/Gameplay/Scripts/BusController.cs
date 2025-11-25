@@ -24,13 +24,18 @@ namespace PixmewStudios
         [Header("Visual Effects")]
         [Tooltip("Defines the Ease: X-Axis is normalized velocity (-1 is falling fast, 1 is jumping up). Y-Axis is the Pitch influence.")]
         [SerializeField] private AnimationCurve dolphinPitchCurve = new AnimationCurve(new Keyframe(-1, 1), new Keyframe(0, 0), new Keyframe(1, -1));
-        
+
         [Tooltip("The maximum angle (in degrees) the nose will pitch up or down.")]
-        [SerializeField] private float maxPitchAngle = 45f; 
+        [SerializeField] private float maxPitchAngle = 45f;
 
         [Header("Body Settings")]
         [SerializeField] private GameObject busSegmentPrefab;
         [SerializeField] private float segmentGap = 1.5f;
+
+        [Header("Collision Settings")]
+        [Tooltip("How many segments behind the head are safe to touch? (Prevents self-collision on tight turns)")]
+        [SerializeField] private int safeSegmentCount = 4;
+        private bool isDead = false;
 
         // --- Internal Variables ---
         private List<Vector3> pathPositions = new List<Vector3>();
@@ -47,6 +52,12 @@ namespace PixmewStudios
         private float verticalVelocity;
         private bool isGrounded;
         private RaycastHit groundHit;
+
+        [Header("Game Rules")]
+        [Tooltip("How many passengers need to be collected to get 1 new bus segment?")]
+        [SerializeField] private int passengersPerSegment = 3;
+        private int totalPassengersCollected = 0;
+
 
         private void Awake()
         {
@@ -112,7 +123,7 @@ namespace PixmewStudios
 
             // C. Dolphin Pitch (X-Axis) - EDITED FOR CURVE CONTROL
             float targetPitchAngle = 0f;
-            
+
             if (!isGrounded)
             {
                 // 1. Normalize velocity. 
@@ -127,7 +138,7 @@ namespace PixmewStudios
                 // 3. Apply the max angle
                 targetPitchAngle = curveValue * maxPitchAngle;
             }
-            
+
             Quaternion pitchRotation = Quaternion.Euler(targetPitchAngle, 0, 0);
 
             // D. Combine All Rotations
@@ -253,8 +264,65 @@ namespace PixmewStudios
         {
             if (busSegmentPrefab == null) return;
             Transform lastSegment = busSegments.Last();
+
+            // Instantiate as normal
             GameObject newSegment = Instantiate(busSegmentPrefab, lastSegment.position, lastSegment.rotation);
+
+            // 2. Add the identifier script
+            BusBodySegment segID = newSegment.GetComponent<BusBodySegment>();
+            segID.segmentIndex = busSegments.Count; // Assign index based on list count
+                                                    // --- NEW LOGIC END ---
+
             busSegments.Add(newSegment.transform);
+        }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (isDead) return;
+
+            // Check if we hit a body segment
+            BusBodySegment segmentHit = other.GetComponent<BusBodySegment>();
+
+            if (segmentHit != null)
+            {
+                // Check if the segment is far enough down the chain to count as a crash
+                // We don't want to crash into segment #1 or #2 just by turning slightly
+                if (segmentHit.segmentIndex > safeSegmentCount)
+                {
+                    HandleCrash();
+                }
+            }
+            // Note: You can add checks for "Obstacle" tags here too
+        }
+
+        private void HandleCrash()
+        {
+            isDead = true;
+            moveSpeed = 0; // Stop immediately
+            normalmoveSpeed = 0;
+            boostedmoveSpeed = 0;
+
+            // Kill any active tweens to prevent jitter
+            transform.DOKill();
+
+            Debug.Log("GAME OVER: Bus crashed into itself!");
+
+            // Optional: Add a crash visual effect here (smoke, shake, explosion)
+            if (cameraController != null) cameraController.TriggerShake(0.5f, 1f, 20);
+        }
+        public void CollectPassenger()
+        {
+            totalPassengersCollected++;
+
+            // Check if we hit the threshold to grow
+            // The modulus operator (%) checks if the remainder is 0
+            if (totalPassengersCollected % passengersPerSegment == 0)
+            {
+                AddBusSegment();
+
+                // Optional: Play a "Level Up" or "Grow" sound here
+                Debug.Log("Bus Grew! Total Passengers: " + totalPassengersCollected);
+            }
         }
 
         #endregion
