@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_IsKinematic
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 2458070764138499471, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 2459341578080360472, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -90,4 +94,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 551c1677342990f4785da5195d751dc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  visuals: {fileID: 8034504264593086838}
   segmentIndex: 0
+--- !u!4 &8034504264593086838 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 438656541206353237, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+  m_PrefabInstance: {fileID: 7608304644668722211}
+  m_PrefabAsset: {fileID: 0}
