@@ -51,5 +51,25 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "LongBus.sln"
+    "dotnet.defaultSolution": "LongBus.sln",
+    "workbench.colorCustomizations": {
+        "activityBar.activeBackground": "#471ed3",
+        "activityBar.background": "#471ed3",
+        "activityBar.foreground": "#e7e7e7",
+        "activityBar.inactiveForeground": "#e7e7e799",
+        "activityBarBadge.background": "#df4b20",
+        "activityBarBadge.foreground": "#e7e7e7",
+        "commandCenter.border": "#e7e7e799",
+        "sash.hoverBorder": "#471ed3",
+        "statusBar.background": "#3818a6",
+        "statusBar.foreground": "#e7e7e7",
+        "statusBarItem.hoverBackground": "#471ed3",
+        "statusBarItem.remoteBackground": "#3818a6",
+        "statusBarItem.remoteForeground": "#e7e7e7",
+        "titleBar.activeBackground": "#3818a6",
+        "titleBar.activeForeground": "#e7e7e7",
+        "titleBar.inactiveBackground": "#3818a699",
+        "titleBar.inactiveForeground": "#e7e7e799"
+    },
+    "peacock.color": "#3818a6"
 }

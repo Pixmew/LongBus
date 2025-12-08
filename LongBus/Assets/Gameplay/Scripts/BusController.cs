@@ -46,6 +46,7 @@ namespace PixmewStudios
 
         [Header("Collision Settings")]
         [SerializeField] private int safeSegmentCount = 4;
+        internal int SegmentCount => busSegments.Count;
         private bool isDead = false;
 
         // --- Internal Variables ---
@@ -390,32 +391,54 @@ namespace PixmewStudios
         }
 
         public void AddBusSegment(bool isInitial = false)
-{
-    if (busSegmentPrefab == null) return;
-    Transform lastSegment = busSegments.Last();
+        {
+            if (busSegmentPrefab == null) return;
+            Transform lastSegment = busSegments.Last();
 
-    // 1. Calculate Spawn Position (Behind the last segment)
-    Vector3 backwardOffset = lastSegment.forward * segmentGap;
-    Vector3 finalPos = lastSegment.position - backwardOffset;
-    
-    // 2. Instantiate
-    GameObject newSegment = Instantiate(busSegmentPrefab, finalPos, lastSegment.rotation);
-    newSegment.layer = LayerMask.NameToLayer("BusBody"); 
+            // 1. Calculate Spawn Position (Behind the last segment)
+            Vector3 backwardOffset = lastSegment.forward * segmentGap;
+            Vector3 finalPos = lastSegment.position - backwardOffset;
 
-    // 3. Setup Segment Data
-    BusBodySegment segScript = newSegment.GetComponent<BusBodySegment>();
-    if (segScript != null)
-    {
-        segScript.segmentIndex = busSegments.Count;
-        
-        // --- DELEGATE ANIMATION ---
-        // We tell the segment: "Do your entrance!"
-        segScript.PlaySpawnAnimation(); 
-    }
+            // 2. Instantiate
+            GameObject newSegment = Instantiate(busSegmentPrefab, finalPos, lastSegment.rotation);
+            newSegment.layer = LayerMask.NameToLayer("BusBody");
 
-    // 4. Add to list
-    busSegments.Add(newSegment.transform);
-}
+            // 3. Setup Segment Data
+            BusBodySegment segScript = newSegment.GetComponent<BusBodySegment>();
+            if (segScript != null)
+            {
+                segScript.segmentIndex = busSegments.Count;
+
+                // --- DELEGATE ANIMATION ---
+                // We tell the segment: "Do your entrance!"
+                segScript.PlaySpawnAnimation();
+            }
+
+            // 4. Add to list
+            busSegments.Add(newSegment.transform);
+        }
+
+        public Vector3 RemoveLastSegment()
+        {
+            // Don't remove if we are already at minimum size (Head + 1 Body)
+            if (busSegments.Count <= 2) return Vector3.zero;
+
+            // 1. Get the last segment
+            int lastIndex = busSegments.Count - 1;
+            Transform segmentToRemove = busSegments[lastIndex];
+            Vector3 position = segmentToRemove.position;
+
+            // 2. Remove it from the list immediately so the physics loop ignores it
+            busSegments.RemoveAt(lastIndex);
+
+            // 3. Smoothly animate it disappearing (Scale down to 0)
+            // We unparent it so it stays behind while shrinking
+            segmentToRemove.SetParent(null);
+            segmentToRemove.DOScale(Vector3.zero, 0.3f)
+                .OnComplete(() => Destroy(segmentToRemove.gameObject));
+
+            return position;
+        }
 
         public void CollectPassenger()
         {
