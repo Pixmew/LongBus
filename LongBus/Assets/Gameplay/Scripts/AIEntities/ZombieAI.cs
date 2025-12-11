@@ -1,34 +1,55 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEditor.ShaderKeywordFilter;
 using UnityEngine;
 
 namespace PixmewStudios
 {
     public class ZombieAI : AIBaseComponent
     {
-        [SerializeField] private LayerMask zombiesearchLayer;
-        internal override AIBaseComponent CheckForTarget()
+        [Header("Zombie Specific")]
+        [SerializeField] private float walkSpeed = 2f;
+        [SerializeField] private float runSpeed = 3f;
+        [SerializeField] private LayerMask humanLayer; // Set this to Layer 6 (Human)
+
+        protected override void Think()
         {
-            Collider[] colliders = Physics.OverlapSphere(transform.position, _detectionRange, zombiesearchLayer);
+            Transform target = FindNearestHuman();
 
-            foreach(Collider collider in colliders)
+            if (target != null)
             {
-                if (collider.attachedRigidbody != null && collider.attachedRigidbody.TryGetComponent<AIBaseComponent>(out AIBaseComponent baseAI))
-                {
-                    if(baseAI is HumanAI human)
-                    {
-                        return baseAI;
-                    }
-                }
+                // CHASE: Just tell the BaseAI where the human is right now.
+                // Since we use vector math, this is super cheap to call every frame.
+                MoveTowards(target.position , runSpeed);
             }
-
-            return null;
+            else
+            {
+                // IDLE: No humans? Just pick random spots.
+                Wander(walkSpeed);
+            }
         }
 
-        internal override void MoveTowards(Vector3 targetPosition)
+        private Transform FindNearestHuman()
         {
-            base.MoveTowards(targetPosition);
+            // Simple overlap check to find nearby colliders on the "Human" layer
+            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, humanLayer);
+
+            Transform bestTarget = null;
+            float closestDist = Mathf.Infinity;
+
+            foreach (var hit in hits)
+            {
+                float dist = Vector3.Distance(transform.position, hit.transform.position);
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    bestTarget = hit.transform;
+                }
+            }
+            return bestTarget;
+        }
+
+        void OnDrawGizmos()
+        {
+            Gizmos.color = new Color(1,1,1,0.5f);
+            Gizmos.DrawSphere(transform.position, detectionRadius);
         }
     }
 }

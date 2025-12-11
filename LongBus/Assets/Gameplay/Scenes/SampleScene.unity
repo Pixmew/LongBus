@@ -287,7 +287,7 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 1
+  orthographic: 0
   orthographic size: 30
   m_Depth: -1
   m_CullingMask:
@@ -490,6 +490,14 @@ PrefabInstance:
     - target: {fileID: 3363731209743680308, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_Name
       value: BusHead
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: moveSpeed
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: normalmoveSpeed
+      value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: safeSegmentCount
