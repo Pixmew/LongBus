@@ -1,0 +1,175 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7776cb6de5005974bb0a534b189b2602, type: 3}
+  m_Name: RoadsWFCModuleData
+  m_EditorClassIdentifier: 
+  Modules:
+  - Name: RoadFourSide_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 27d424c66667c724bab76c72a7551451, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 02000000
+  - Name: RoadStrait_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: c99672c5768553d45884f40ba48863cc, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 060000000b00000004000000070000000a000000000000000f000000
+    - ValidNeighbors: 0000000004000000080000000900000007000000050000000e000000
+    - ValidNeighbors: 03000000010000000d000000
+    - ValidNeighbors: 03000000010000000c000000
+  - Name: RoadStrait_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: c99672c5768553d45884f40ba48863cc, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 030000000e00000002000000
+    - ValidNeighbors: 030000000f00000002000000
+    - ValidNeighbors: 040000000800000005000000060000000b000000000000000c000000
+    - ValidNeighbors: 0000000005000000090000000a00000006000000070000000d000000
+  - Name: Ground_0
+    PrefabAsset: {fileID: 3103720596267196929, guid: cbb424e404250734f9e11387c05299ba, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 0200000003000000090000000500000008000000
+    - ValidNeighbors: 02000000030000000b000000060000000a000000
+    - ValidNeighbors: 010000000a000000070000000900000003000000
+    - ValidNeighbors: 010000000300000008000000040000000b000000
+  - Name: RoadThreeSide_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 17b2ea5e1cf06634c85016a2b3415f1a, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 010000000b0000000a000000
+    - ValidNeighbors: 010000000800000009000000
+    - ValidNeighbors: 03000000
+    - ValidNeighbors: 02000000
+  - Name: RoadThreeSide_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: 17b2ea5e1cf06634c85016a2b3415f1a, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 03000000
+    - ValidNeighbors: 02000000080000000b000000
+    - ValidNeighbors: 02000000090000000a000000
+  - Name: RoadThreeSide_3
+    PrefabAsset: {fileID: 5271452671972497104, guid: 17b2ea5e1cf06634c85016a2b3415f1a, type: 3}
+    Rotation: {x: -0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 03000000
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 020000000b00000008000000
+    - ValidNeighbors: 020000000a00000009000000
+  - Name: RoadThreeSide_2
+    PrefabAsset: {fileID: 5271452671972497104, guid: 17b2ea5e1cf06634c85016a2b3415f1a, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 010000000a0000000b000000
+    - ValidNeighbors: 010000000900000008000000
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 03000000
+  - Name: RoadCurve_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000090000000400000007000000
+    - ValidNeighbors: 030000000c0000000f0000000d000000
+    - ValidNeighbors: 030000000f0000000d000000
+    - ValidNeighbors: 020000000500000006000000
+  - Name: RoadCurve_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 010000000d0000000700000004000000
+    - ValidNeighbors: 03000000080000000c0000000f000000
+    - ValidNeighbors: 020000000500000006000000
+    - ValidNeighbors: 030000000e0000000c0000000f000000
+  - Name: RoadCurve_2
+    PrefabAsset: {fileID: 5271452671972497104, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 030000000d0000000e0000000c000000
+    - ValidNeighbors: 010000000700000004000000
+    - ValidNeighbors: 020000000d0000000600000005000000
+    - ValidNeighbors: 030000000e0000000c0000000f000000
+  - Name: RoadCurve_3
+    PrefabAsset: {fileID: 5271452671972497104, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 030000000c000000
+    - ValidNeighbors: 010000000400000007000000
+    - ValidNeighbors: 030000000f000000
+    - ValidNeighbors: 020000000600000005000000
+  - Name: RoadEnd_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: 3471ea0499e057941839c7f3ca6bfb3c, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 0900000008000000
+    - ValidNeighbors: 0a0000000b000000
+    - ValidNeighbors: 010000000a00000009000000
+    - ValidNeighbors: 02000000
+  - Name: RoadEnd_3
+    PrefabAsset: {fileID: 5271452671972497104, guid: 3471ea0499e057941839c7f3ca6bfb3c, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 08000000
+    - ValidNeighbors: 0a00000009000000
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 080000000a00000001000000
+  - Name: RoadEnd_2
+    PrefabAsset: {fileID: 5271452671972497104, guid: 3471ea0499e057941839c7f3ca6bfb3c, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 0a00000002000000
+    - ValidNeighbors: 0a00000009000000
+    - ValidNeighbors: 
+  - Name: RoadEnd_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 3471ea0499e057941839c7f3ca6bfb3c, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 090000000800000002000000
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 090000000a000000
+    - ValidNeighbors: 080000000b000000

@@ -1,0 +1,245 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7776cb6de5005974bb0a534b189b2602, type: 3}
+  m_Name: DefaultWFCModuleData
+  m_EditorClassIdentifier: 
+  Modules:
+  - Name: Ground_0
+    PrefabAsset: {fileID: 3103720596267196929, guid: cbb424e404250734f9e11387c05299ba, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000030000001300000010000000140000000800000009000000
+    - ValidNeighbors: 00000000040000001500000012000000160000000600000007000000
+    - ValidNeighbors: 0000000002000000160000000f000000130000000900000006000000
+    - ValidNeighbors: 07000000010000000000000014000000110000001500000008000000
+  - Name: WaterBoundry_2side_0
+    PrefabAsset: {fileID: 3201080623835358841, guid: 4172c86a8de7d0744aacf0bb08130731, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000070000000d000000
+    - ValidNeighbors: 01000000080000000a000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 05000000
+  - Name: WaterBoundry_2side_2
+    PrefabAsset: {fileID: 3201080623835358841, guid: 4172c86a8de7d0744aacf0bb08130731, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 02000000060000000c000000
+    - ValidNeighbors: 02000000090000000b000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 00000000
+  - Name: WaterBoundry_2side_1
+    PrefabAsset: {fileID: 3201080623835358841, guid: 4172c86a8de7d0744aacf0bb08130731, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 03000000080000000c000000
+    - ValidNeighbors: 03000000090000000d000000
+  - Name: WaterBoundry_2side_3
+    PrefabAsset: {fileID: 3201080623835358841, guid: 4172c86a8de7d0744aacf0bb08130731, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 04000000070000000b000000
+    - ValidNeighbors: 04000000060000000a000000
+  - Name: Water_0
+    PrefabAsset: {fileID: 3201080623835358841, guid: 22b90285253d4d249b634248fe88566b, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 05000000040000000a0000000b000000
+    - ValidNeighbors: 05000000030000000c0000000d000000
+    - ValidNeighbors: 05000000010000000d0000000a000000
+    - ValidNeighbors: 05000000020000000b0000000c000000
+  - Name: 1water3sandTransition_3
+    PrefabAsset: {fileID: 3201080623835358841, guid: bc813480b461c0e46b1b0e5d1448763d, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 04000000
+    - ValidNeighbors: 00000000
+  - Name: 1water3sandTransition_0
+    PrefabAsset: {fileID: 3201080623835358841, guid: bc813480b461c0e46b1b0e5d1448763d, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 04000000
+  - Name: 1water3sandTransition_1
+    PrefabAsset: {fileID: 3201080623835358841, guid: bc813480b461c0e46b1b0e5d1448763d, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 03000000
+  - Name: 1water3sandTransition_2
+    PrefabAsset: {fileID: 3201080623835358841, guid: bc813480b461c0e46b1b0e5d1448763d, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 03000000
+    - ValidNeighbors: 00000000
+  - Name: 3water1sandTransition_2
+    PrefabAsset: {fileID: 3201080623835358841, guid: 3fea795c33a48604c9653265981b8924, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 04000000
+    - ValidNeighbors: 05000000
+  - Name: 3water1sandTransition_1
+    PrefabAsset: {fileID: 3201080623835358841, guid: 3fea795c33a48604c9653265981b8924, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 04000000
+  - Name: 3water1sandTransition_0
+    PrefabAsset: {fileID: 3201080623835358841, guid: 3fea795c33a48604c9653265981b8924, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 02000000
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 03000000
+  - Name: 3water1sandTransition_3
+    PrefabAsset: {fileID: 3201080623835358841, guid: 3fea795c33a48604c9653265981b8924, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 05000000
+    - ValidNeighbors: 01000000
+    - ValidNeighbors: 03000000
+    - ValidNeighbors: 05000000
+  - Name: DeepForest_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 6dab66ecde115614797d03aa07b45f20, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 120000000e000000
+    - ValidNeighbors: 0e00000010000000
+    - ValidNeighbors: 0e00000011000000
+    - ValidNeighbors: 0f0000000e000000
+  - Name: ForestSide_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: 8f2d2f9fc6a1b324299848550ee5cd23, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 160000000f000000
+    - ValidNeighbors: 0f00000013000000
+    - ValidNeighbors: 0e000000
+    - ValidNeighbors: 00000000
+  - Name: ForestSide_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 8f2d2f9fc6a1b324299848550ee5cd23, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 0e000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 1000000014000000
+    - ValidNeighbors: 1300000010000000
+  - Name: ForestSide_3
+    PrefabAsset: {fileID: 5271452671972497104, guid: 8f2d2f9fc6a1b324299848550ee5cd23, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 1100000015000000
+    - ValidNeighbors: 1400000011000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 0e000000
+  - Name: ForestSide_2
+    PrefabAsset: {fileID: 5271452671972497104, guid: 8f2d2f9fc6a1b324299848550ee5cd23, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 0e000000
+    - ValidNeighbors: 1500000012000000
+    - ValidNeighbors: 1200000016000000
+  - Name: Forestcorner_1
+    PrefabAsset: {fileID: 5271452671972497104, guid: 4c2e2587b744e6949866921c82215ff3, type: 3}
+    Rotation: {x: -0, y: 90, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 0f000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 10000000
+    - ValidNeighbors: 00000000
+  - Name: Forestcorner_0
+    PrefabAsset: {fileID: 5271452671972497104, guid: 4c2e2587b744e6949866921c82215ff3, type: 3}
+    Rotation: {x: -0, y: 0, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 11000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 10000000
+  - Name: Forestcorner_3
+    PrefabAsset: {fileID: 5271452671972497104, guid: 4c2e2587b744e6949866921c82215ff3, type: 3}
+    Rotation: {x: 0, y: 270, z: 0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 11000000
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 12000000
+  - Name: Forestcorner_2
+    PrefabAsset: {fileID: 5271452671972497104, guid: 4c2e2587b744e6949866921c82215ff3, type: 3}
+    Rotation: {x: -0, y: 180, z: -0}
+    Adjacency:
+    - ValidNeighbors: 
+    - ValidNeighbors: 
+    - ValidNeighbors: 00000000
+    - ValidNeighbors: 0f000000
+    - ValidNeighbors: 12000000
+    - ValidNeighbors: 00000000

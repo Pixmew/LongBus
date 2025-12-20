@@ -407,12 +407,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   target: {fileID: 935299222}
-  offset: {x: 0, y: 40, z: -20}
+  offset: {x: 0, y: 6, z: -3}
   followDuration: 0.5
   minSpeedForZoom: 10
   maxSpeedForZoom: 20
-  normalOrthoSize: 20
-  boostOrthoSize: 15
+  normalOrthoSize: 5
+  boostOrthoSize: 10
   zoomDuration: 1
   mainCamera: {fileID: 963194227}
 --- !u!4 &1627791101
@@ -493,15 +493,31 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: moveSpeed
-      value: 15
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: segmentGap
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: normalmoveSpeed
-      value: 15
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: boostedmoveSpeed
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: safeSegmentCount
-      value: 3
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: groundCheckOffset
+      value: 0.1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: headCollisionRadius
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: obstacleMask.m_Bits
