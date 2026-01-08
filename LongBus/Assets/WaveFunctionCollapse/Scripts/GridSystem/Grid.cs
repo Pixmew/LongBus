@@ -22,7 +22,13 @@ namespace PixmewStudios
 
         void Start()
         {
-            if (wfcData != null)
+           
+        }
+
+        [ContextMenu("Generate")]
+        internal void Generate()
+        {
+             if (wfcData != null)
             {
                 // Turn the Save File into the Engine
                 ConvertAssetToRuntimeData();

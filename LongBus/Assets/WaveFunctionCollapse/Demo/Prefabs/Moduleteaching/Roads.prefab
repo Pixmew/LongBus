@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5736558800008952213}
-  - component: {fileID: 8942805947982704394}
+  - component: {fileID: -4734818352617007601}
   m_Layer: 0
   m_Name: Roads
   m_TagString: Untagged
@@ -37,7 +37,7 @@ Transform:
   - {fileID: 6727277548203248088}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8942805947982704394
+--- !u!114 &-4734818352617007601
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -46,11 +46,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 1105083763419528998}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 13faecf043a8ba94baa0211e1229e3ad, type: 3}
+  m_Script: {fileID: 11500000, guid: 1c7929570e653b64485ae9a8d6fc844a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gridcellsize: 5
   targetAsset: {fileID: 11400000, guid: 1250c9bb7903006478e44424b42643dc, type: 2}
+  inputPrefabs:
+  - {fileID: 567816293374371002, guid: cbb424e404250734f9e11387c05299ba, type: 3}
+  - {fileID: 6590130253652319809, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
+  - {fileID: 6590130253652319809, guid: c99672c5768553d45884f40ba48863cc, type: 3}
+  - {fileID: 6590130253652319809, guid: 17b2ea5e1cf06634c85016a2b3415f1a, type: 3}
 --- !u!1 &2534234190004864094
 GameObject:
   m_ObjectHideFlags: 0
