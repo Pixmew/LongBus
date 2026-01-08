@@ -410,6 +410,7 @@ MonoBehaviour:
   inputPrefabs:
   - {fileID: 567816293374371002, guid: cbb424e404250734f9e11387c05299ba, type: 3}
   - {fileID: 6590130253652319809, guid: c99672c5768553d45884f40ba48863cc, type: 3}
+  - {fileID: 6590130253652319809, guid: ac5d4b237708e384c8d3bbf990a5f6b1, type: 3}
 --- !u!4 &1237097296
 Transform:
   m_ObjectHideFlags: 0
