@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1941366552738314910}
   - component: {fileID: 567816293374371002}
   m_Layer: 0
-  m_Name: Ground
+  m_Name: BuildingCornerTop
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -45,15 +45,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54940af424f60ab4aa041d90d6220ebc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moduleID: Ground
+  moduleID: BuildingCornerTop
   Weight: 1
   Top: 1
-  Bottom: 0
-  Left: 0
-  Right: 0
-  Front: 0
-  Back: 0
-  isSymmetric: 1
+  Bottom: 1
+  Left: 1
+  Right: 3
+  Front: 1
+  Back: 3
+  isSymmetric: 0
 --- !u!1 &3813849142368005856
 GameObject:
   m_ObjectHideFlags: 0
@@ -81,8 +81,8 @@ Transform:
   m_GameObject: {fileID: 3813849142368005856}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -2.5, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 5}
+  m_LocalPosition: {x: 1.25, y: -2.5, z: -1.2500001}
+  m_LocalScale: {x: 2.5, y: 5, z: 2.5}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 1941366552738314910}
@@ -115,7 +115,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 7a147bbc0c1ca6d48be2357d5727a6b9, type: 2}
+  - {fileID: 2100000, guid: ab70ed4d4a8e7bd4db87d12712985928, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0

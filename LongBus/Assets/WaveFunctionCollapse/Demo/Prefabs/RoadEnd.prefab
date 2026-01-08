@@ -130,6 +130,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moduleID: RoadEnd
+  Weight: 1
+  Top: 1
+  Bottom: 0
+  Left: 0
+  Right: 2
+  Front: 0
+  Back: 0
+  isSymmetric: 0
 --- !u!1001 &5911489294961981815
 PrefabInstance:
   m_ObjectHideFlags: 0

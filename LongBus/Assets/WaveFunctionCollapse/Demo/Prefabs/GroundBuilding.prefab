@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1941366552738314910}
   - component: {fileID: 567816293374371002}
   m_Layer: 0
-  m_Name: Ground
+  m_Name: GroundBuilding
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moduleID: Ground
   Weight: 1
-  Top: 1
+  Top: 3
   Bottom: 0
   Left: 0
   Right: 0

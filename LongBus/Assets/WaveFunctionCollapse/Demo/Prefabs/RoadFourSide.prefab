@@ -130,6 +130,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moduleID: RoadFourSide
+  Weight: 1
+  Top: 1
+  Bottom: 0
+  Left: 2
+  Right: 2
+  Front: 2
+  Back: 2
+  isSymmetric: 0
 --- !u!1001 &27746917390803670
 PrefabInstance:
   m_ObjectHideFlags: 0

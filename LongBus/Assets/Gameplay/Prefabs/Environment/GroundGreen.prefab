@@ -377,7 +377,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   wfcData: {fileID: 11400000, guid: 1250c9bb7903006478e44424b42643dc, type: 2}
-  gridSize: {x: 18, y: 1, z: 18}
+  gridSize: {x: 18, y: 4, z: 18}
   cellSize: 5
   isGridInititlized: 0
   positionOffset: {x: -45, y: 0, z: -45}
