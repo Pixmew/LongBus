@@ -15,6 +15,11 @@ namespace PixmewStudios
         [SerializeField] internal float boostRampDuration = 0.2f;
         [SerializeField] private float rotationSpeed = 100f;
 
+        [Header("Drift Settings")]
+        [Tooltip("Low value = Ice/Drift (e.g. 2.0). High value = Grip (e.g. 15.0).")]
+        [SerializeField] private float driftTraction = 3.5f; 
+        private Vector3 currentVelocityDir; // The actual direction we are sliding
+
         [Header("Jump & Physics")]
         [SerializeField] private float jumpForce = 12f;
         [SerializeField] private float gravity = 30f;
@@ -69,7 +74,6 @@ namespace PixmewStudios
         [SerializeField] private int passengersPerSegment = 3;
         private int totalPassengersCollected = 0;
 
-        // 1. Ensure AWAKE pre-fills the path (Crucial for spawning "behind")
         private void Awake()
         {
             inputActions = new BusControls();
@@ -83,20 +87,20 @@ namespace PixmewStudios
             busSegments.Add(this.transform);
 
             // --- PRE-FILL HISTORY ---
-            // We add fake history points BEHIND the bus so the initial segments have a track to sit on
             pathPositions.Add(transform.position);
             pathRotations.Add(transform.rotation);
 
             Vector3 backDir = -transform.forward;
-            // Pre-fill about 15 units of history (enough for ~10 segments)
             for (int i = 1; i <= 50; i++)
             {
-                // 0.2f fidelity gives us a smooth curve history
                 pathPositions.Add(transform.position + (backDir * (i * 0.2f)));
                 pathRotations.Add(transform.rotation);
             }
 
             lastPosition = transform.position;
+            
+            // Initialize drift direction to forward so we don't start sliding sideways instantly
+            currentVelocityDir = transform.forward;
 
             if (Camera.main != null && Camera.main.transform.parent != null)
             {
@@ -146,13 +150,15 @@ namespace PixmewStudios
         {
             Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y).normalized;
 
-            // 1. Rotation Logic
+            // --- 1. Rotation Logic (Steering) ---
+            // This rotates the visual model quickly.
             Quaternion targetLookRotation = transform.rotation;
             if (moveDirection.magnitude >= 0.1f)
             {
                 targetLookRotation = Quaternion.LookRotation(moveDirection);
             }
 
+            // Calculate Visual Pitch (Dolphin/Jump effect)
             float targetPitchAngle = 0f;
             if (!isGrounded)
             {
@@ -161,9 +167,29 @@ namespace PixmewStudios
             }
 
             Quaternion pitchRotation = Quaternion.Euler(targetPitchAngle, 0, 0);
+            
+            // Apply Rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, targetLookRotation * pitchRotation, rotationSpeed * Time.deltaTime);
 
-            // 2. Vertical Logic
+
+            // --- 2. Drift / Velocity Logic (The New Part) ---
+            
+            // Get the direction the bus is FACING
+            Vector3 faceDir = transform.forward;
+            faceDir.y = 0; 
+            faceDir.Normalize();
+
+            // Instead of setting velocity instantly to faceDir, we LERP towards it.
+            // driftTraction determines how "grippy" the tires are.
+            // If traction is low, currentVelocityDir will lag behind faceDir (Drift).
+            currentVelocityDir = Vector3.Lerp(currentVelocityDir, faceDir, driftTraction * Time.deltaTime);
+            currentVelocityDir.Normalize();
+
+            // Calculate the actual movement vector based on the drift direction
+            Vector3 forwardMovement = currentVelocityDir * moveSpeed;
+
+
+            // --- 3. Vertical Logic (Gravity) ---
             if (isGrounded && verticalVelocity <= 0)
             {
                 verticalVelocity = 0;
@@ -175,12 +201,6 @@ namespace PixmewStudios
             {
                 verticalVelocity -= gravity * Time.deltaTime;
             }
-
-            // 3. Velocity Calculation
-            Vector3 forwardMovement = transform.forward;
-            forwardMovement.y = 0;
-            forwardMovement.Normalize();
-            forwardMovement *= moveSpeed;
 
             Vector3 verticalMovement = Vector3.up * verticalVelocity;
             Vector3 finalVelocity = (forwardMovement + verticalMovement) * Time.deltaTime;
@@ -202,23 +222,19 @@ namespace PixmewStudios
             Vector3 collisionNormal = Vector3.zero;
 
             // CHECK 1: The Prediction Ray (SphereCast)
-            // Good for detecting walls in front of us
             if (Physics.SphereCast(origin, headCollisionRadius, direction, out hit, distance, obstacleMask))
             {
                 collisionDetected = true;
                 collisionNormal = hit.normal;
 
-                // Check if it's our own body
                 BusBodySegment segment = hit.collider.GetComponent<BusBodySegment>();
                 if (segment != null && segment.segmentIndex <= safeSegmentCount)
                 {
-                    collisionDetected = false; // Ignore safe segments
+                    collisionDetected = false; 
                 }
             }
 
             // CHECK 2: The "Gap Filler" (Overlap Check)
-            // If Raycast missed, check if the DESTINATION point is literally inside a collider.
-            // This catches cases where we slipped through a gap.
             if (!collisionDetected)
             {
                 Vector3 futurePos = origin + desiredMotion;
@@ -227,11 +243,9 @@ namespace PixmewStudios
                 foreach (var col in overlaps)
                 {
                     BusBodySegment segment = col.GetComponent<BusBodySegment>();
-                    // If it's a body part and NOT a safe one
                     if (segment == null || segment.segmentIndex > safeSegmentCount)
                     {
                         collisionDetected = true;
-                        // Since we are already "inside" or very close, push back opposite to movement
                         collisionNormal = -direction;
                         break;
                     }
@@ -241,19 +255,23 @@ namespace PixmewStudios
             // --- RESOLUTION ---
             if (collisionDetected)
             {
-                // 1. Project velocity along the wall (Standard slide)
                 Vector3 slideMotion = Vector3.ProjectOnPlane(desiredMotion, collisionNormal);
-
-                // 2. Apply Friction/Drag
                 float grindFactor = 1f - wallGrindFriction;
                 slideMotion *= grindFactor;
+                
+                // If we hit a wall, we should align our drift momentum to the wall slide
+                // preventing us from sticking to the wall
+                if (slideMotion.magnitude > 0.001f)
+                {
+                     currentVelocityDir = slideMotion.normalized;
+                     // Keep Y as 0 for the physics vector
+                     currentVelocityDir.y = 0;
+                }
 
-                // Apply the reduced movement
                 transform.position += slideMotion;
             }
             else
             {
-                // No collision? Move normally
                 transform.position += desiredMotion;
             }
         }
@@ -262,8 +280,8 @@ namespace PixmewStudios
         {
             for (int i = 0; i < count; i++)
             {
-                AddBusSegment(true); // true = silent spawn (optional, see below)
-                yield return new WaitForSeconds(0.15f); // "Pop... Pop..." effect
+                AddBusSegment(true);
+                yield return new WaitForSeconds(0.15f);
             }
         }
 
@@ -273,23 +291,13 @@ namespace PixmewStudios
 
         private void CheckIfStuck()
         {
-            // Calculate how much we ACTUALLY moved this frame
             float distMoved = Vector3.Distance(transform.position, lastPosition);
-
-            // Update last position for next frame
             lastPosition = transform.position;
-
-            // Are we trying to move? (Input is active or speed is high)
             bool isTryingToMove = moveSpeed > 0;
 
-            // If we are trying to move, but barely moving (less than 1 unit per second approx)
             if (isTryingToMove && distMoved < (2f * Time.deltaTime))
             {
                 currentStuckTimer += Time.deltaTime;
-
-                // Optional: Debug log to see the timer counting up
-                // Debug.Log($"Stuck... {currentStuckTimer:F1}s");
-
                 if (currentStuckTimer >= maxStuckTime)
                 {
                     TriggerGameOver();
@@ -297,7 +305,6 @@ namespace PixmewStudios
             }
             else
             {
-                // We are moving fine, reset timer
                 currentStuckTimer = 0f;
             }
         }
@@ -307,18 +314,13 @@ namespace PixmewStudios
             if (isDead) return;
             isDead = true;
             Debug.LogError("GAME OVER: Bus was stuck for too long!");
-
-            // Stop everything
             moveSpeed = 0;
-            enabled = false; // Disable this script
-
-            // TODO: Show Game Over UI here
+            enabled = false; 
         }
 
         #endregion
 
         #region Path & Segments (Standard)
-        // ... (Keep your existing RecordPath, MoveBodySegments, SetSegmentToPathDistance methods here)
         private void RecordPath()
         {
             float distSqr = (pathPositions.Count > 0) ? (pathPositions[0] - transform.position).sqrMagnitude : 1f;
@@ -395,44 +397,32 @@ namespace PixmewStudios
             if (busSegmentPrefab == null) return;
             Transform lastSegment = busSegments.Last();
 
-            // 1. Calculate Spawn Position (Behind the last segment)
             Vector3 backwardOffset = lastSegment.forward * segmentGap;
             Vector3 finalPos = lastSegment.position - backwardOffset;
 
-            // 2. Instantiate
             GameObject newSegment = Instantiate(busSegmentPrefab, finalPos, lastSegment.rotation);
             newSegment.layer = LayerMask.NameToLayer("BusBody");
 
-            // 3. Setup Segment Data
             BusBodySegment segScript = newSegment.GetComponent<BusBodySegment>();
             if (segScript != null)
             {
                 segScript.segmentIndex = busSegments.Count;
-
-                // --- DELEGATE ANIMATION ---
-                // We tell the segment: "Do your entrance!"
                 segScript.PlaySpawnAnimation();
             }
 
-            // 4. Add to list
             busSegments.Add(newSegment.transform);
         }
 
         public Vector3 RemoveLastSegment()
         {
-            // Don't remove if we are already at minimum size (Head + 1 Body)
             if (busSegments.Count <= 2) return Vector3.zero;
 
-            // 1. Get the last segment
             int lastIndex = busSegments.Count - 1;
             Transform segmentToRemove = busSegments[lastIndex];
             Vector3 position = segmentToRemove.position;
 
-            // 2. Remove it from the list immediately so the physics loop ignores it
             busSegments.RemoveAt(lastIndex);
 
-            // 3. Smoothly animate it disappearing (Scale down to 0)
-            // We unparent it so it stays behind while shrinking
             segmentToRemove.SetParent(null);
             segmentToRemove.DOScale(Vector3.zero, 0.3f)
                 .OnComplete(() => Destroy(segmentToRemove.gameObject));
@@ -453,6 +443,10 @@ namespace PixmewStudios
             Gizmos.DrawLine(transform.position, transform.position + Vector3.down * (groundCheckOffset + 0.2f));
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, headCollisionRadius);
+
+            // Visualize drift
+            Gizmos.color = Color.blue;
+            Gizmos.DrawRay(transform.position, currentVelocityDir * 3f);
         }
     }
 }
