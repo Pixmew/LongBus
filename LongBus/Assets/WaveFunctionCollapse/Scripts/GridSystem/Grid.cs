@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.Analytics;
 
@@ -19,16 +20,17 @@ namespace PixmewStudios
         [SerializeField] internal WFCModuleData wFCModuleData;
         private Stack<Vector3Int> pointsToUpdate = new Stack<Vector3Int>();
         [SerializeField] private bool debugGizmos = false;
+        [SerializeField] private bool spawnPrefabs = false;
 
         void Start()
         {
-           
+
         }
 
         [ContextMenu("Generate")]
         internal void Generate()
         {
-             if (wfcData != null)
+            if (wfcData != null)
             {
                 // Turn the Save File into the Engine
                 ConvertAssetToRuntimeData();
@@ -309,43 +311,53 @@ namespace PixmewStudios
                             // NEW: Read from ScriptableObject
                             ModuleDefinition module = wfcData.Modules[cell.collapsedModuleID];
 
-                            // Use the saved Prefab + Saved Rotation
-                            Instantiate(module.PrefabAsset, worldPos, Quaternion.Euler(module.Rotation), transform);
+                            if (!spawnPrefabs)
+                            {
+                                // Use the saved Prefab + Saved Rotation
+                                Instantiate(module.PrefabAsset, worldPos, Quaternion.Euler(module.Rotation), transform);
+                            }
+                            else
+                            {
+                               GameObject moduleObject = PrefabUtility.InstantiatePrefab(module.PrefabAsset, transform) as GameObject;
+                                moduleObject.transform.position = worldPos;
+                                moduleObject.transform.eulerAngles = module.Rotation;
+                            }
                         }
                     }
                 }
             }
-        }
 
 
-        void OnDrawGizmos()
-        {
-            if (!isGridInititlized || gridcells == null || !debugGizmos) return;
-
-            // Loop through the grid dimensions
-            for (int x = 0; x < gridSize.x; x++)
+            void OnDrawGizmos()
             {
-                for (int y = 0; y < gridSize.y; y++)
+                if (!isGridInititlized || gridcells == null || !debugGizmos) return;
+
+                // Loop through the grid dimensions
+                for (int x = 0; x < gridSize.x; x++)
                 {
-                    for (int z = 0; z < gridSize.z; z++)
+                    for (int y = 0; y < gridSize.y; y++)
                     {
-                        // Math: Calculate World Position
-                        // worldPos = transform.position + (indices * gap)
-                        Vector3 worldPos = transform.position +
-                                           new Vector3(x * cellSize, y * cellSize, z * cellSize) + positionOffset;
-
-                        // Inside OnDrawGizmos loop:
-                        GridCell cell = gridcells[x, y, z];
-
-                        if (cell.isCollapsed)
+                        for (int z = 0; z < gridSize.z; z++)
                         {
-                            Gizmos.color = Color.blue; // Blue = Solved
-                            Gizmos.DrawCube(worldPos, Vector3.one * (cellSize * 0.9f));
-                        }
-                        else
-                        {
-                            Gizmos.color = Color.green; // Green = Still thinking
-                            Gizmos.DrawWireCube(worldPos, Vector3.one * (cellSize * 0.9f));
+                            // Math: Calculate World Position
+                            // worldPos = transform.position + (indices * gap)
+                            Vector3 worldPos = transform.position +
+                                               new Vector3(x * cellSize, y * cellSize, z * cellSize) + positionOffset;
+
+                            // Inside OnDrawGizmos loop:
+                            GridCell cell = gridcells[x, y, z];
+
+                            if (cell.isCollapsed)
+                            {
+                                Gizmos.color = Color.blue; // Blue = Solved
+                                Gizmos.DrawCube(worldPos, Vector3.one * (cellSize * 0.9f));
+                            }
+                            else
+                            {
+                                Gizmos.color = Color.green; // Green = Still thinking
+                                Gizmos.DrawWireCube(worldPos, Vector3.one * (cellSize * 0.9f));
+
+                            }
                         }
                     }
                 }

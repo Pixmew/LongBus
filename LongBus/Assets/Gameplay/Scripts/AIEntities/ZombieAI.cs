@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 namespace PixmewStudios
@@ -8,6 +9,7 @@ namespace PixmewStudios
         [SerializeField] private float walkSpeed = 2f;
         [SerializeField] private float runSpeed = 3f;
         [SerializeField] private LayerMask humanLayer; // Set this to Layer 6 (Human)
+        [SerializeField] private Animator animator;
 
         protected override void Think()
         {
@@ -18,11 +20,21 @@ namespace PixmewStudios
                 // CHASE: Just tell the BaseAI where the human is right now.
                 // Since we use vector math, this is super cheap to call every frame.
                 MoveTowards(target.position , runSpeed);
+                animator.SetTrigger("Run");
+                animator.SetInteger("RunType" , UnityEngine.Random.Range(0,2));
             }
             else
             {
                 // IDLE: No humans? Just pick random spots.
                 Wander(walkSpeed);
+                if(wanderTimer <= 0)
+                {
+                    animator.SetTrigger("Idle");
+                }
+                else
+                {
+                    animator.SetTrigger("Walk");
+                }
             }
         }
 

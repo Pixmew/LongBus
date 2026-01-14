@@ -83,6 +83,37 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!1 &2248113873016766451
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7121456475233401928}
+  m_Layer: 0
+  m_Name: SpawnPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7121456475233401928
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2248113873016766451}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5429450235058339684}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5271452671972497104
 GameObject:
   m_ObjectHideFlags: 0
@@ -93,6 +124,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5429450235058339684}
   - component: {fileID: 6590130253652319809}
+  - component: {fileID: 4882609032130018945}
   m_Layer: 0
   m_Name: RoadThreeSide
   m_TagString: Untagged
@@ -115,6 +147,7 @@ Transform:
   m_Children:
   - {fileID: 2635083173252367046}
   - {fileID: 2510637280011162528}
+  - {fileID: 7121456475233401928}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6590130253652319809
@@ -138,6 +171,25 @@ MonoBehaviour:
   Front: 0
   Back: 2
   isSymmetric: 0
+--- !u!114 &4882609032130018945
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5271452671972497104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 08783af0be2be5641a9e843c2bf49984, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  humanPrefab: {fileID: 5681866562814903024, guid: c3f282bf35eeb4f4b88d583f7823a738, type: 3}
+  zombiePrefab: {fileID: 434136985278880104, guid: 30b8ec6f8e95bb949a8f3fa29bdc5e91, type: 3}
+  spawnPoints:
+  - {fileID: 7121456475233401928}
+  humanChance: 0.3
+  zombieChance: 0.3
+  spawns: []
 --- !u!1001 &2692354540507133003
 PrefabInstance:
   m_ObjectHideFlags: 0

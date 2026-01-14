@@ -216,6 +216,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &830580899
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 830580901}
+  - component: {fileID: 830580900}
+  m_Layer: 0
+  m_Name: PoolManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &830580900
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830580899}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 54bb9917912d65142bafb75b22282273, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &830580901
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 830580899}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -33.46912, y: 2.4961183, z: 48.889294}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &935299222 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
@@ -533,6 +577,54 @@ PrefabInstance:
       propertyPath: passengersPerSegment
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[0].time
+      value: -1.0066681
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[1].time
+      value: 0.013333384
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[1].value
+      value: -0.018850148
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[0].inSlope
+      value: -1.9509693
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[1].inSlope
+      value: 0.036975395
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[2].inSlope
+      value: -2.8717031
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[0].outSlope
+      value: -1.9509693
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[1].outSlope
+      value: 0.036975395
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[2].inWeight
+      value: 0.21333325
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[2].outSlope
+      value: -2.8717031
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[0].outWeight
+      value: 0.12903346
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: dolphinPitchCurve.m_Curve.Array.data[1].outWeight
+      value: 0.43918923
+      objectReference: {fileID: 0}
     - target: {fileID: 7822436748943007387, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_IsTrigger
       value: 1
@@ -550,3 +642,4 @@ SceneRoots:
   - {fileID: 2006777223}
   - {fileID: 1627791101}
   - {fileID: 1023776328}
+  - {fileID: 830580901}

@@ -115,7 +115,6 @@ namespace PixmewStudios
         {
             wanderTimer -= Time.deltaTime;
 
-
             // Only pick a new spot if time is up OR we are very close to the old spot
             if (wanderTimer <= 0 || (hasTarget && Vector3.Distance(transform.position, currentTarget) < 1f))
             {
