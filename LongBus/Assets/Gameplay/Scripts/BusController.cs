@@ -18,7 +18,7 @@ namespace PixmewStudios
         [Header("Drift Settings")]
         [Tooltip("Low value = Ice/Drift (e.g. 2.0). High value = Grip (e.g. 15.0).")]
         [SerializeField] private float driftTraction = 3.5f; 
-        private Vector3 currentVelocityDir; // The actual direction we are sliding
+        private Vector3 currentVelocityDir; 
 
         [Header("Jump & Physics")]
         [SerializeField] private float jumpForce = 12f;
@@ -27,16 +27,12 @@ namespace PixmewStudios
         [SerializeField] private float groundCheckOffset = 0.55f;
 
         [Header("Fake Collision & Friction")]
-        [Tooltip("Layers the Head should physically collide with")]
         [SerializeField] private LayerMask obstacleMask;
         [SerializeField] private float headCollisionRadius = 1.0f;
-
-        [Tooltip("0 = Ice (Easy), 1 = Sticky Glue (Impossible). Recommended: 0.7")]
         [Range(0f, 1f)]
         [SerializeField] private float wallGrindFriction = 0.7f;
 
         [Header("Game Over Rules")]
-        [Tooltip("How long can the bus be stuck before Game Over?")]
         [SerializeField] private float maxStuckTime = 5f;
         private float currentStuckTimer = 0f;
         private Vector3 lastPosition;
@@ -48,6 +44,9 @@ namespace PixmewStudios
         [Header("Body Settings")]
         [SerializeField] private GameObject busSegmentPrefab;
         [SerializeField] private float segmentGap = 1.5f;
+        
+        [Tooltip("If true, segments look at the path direction (Trailer style). If false, they copy the head's rotation (Snake style). True is better for Drifting.")]
+        [SerializeField] private bool useTangentRotation = true; 
 
         [Header("Collision Settings")]
         [SerializeField] private int safeSegmentCount = 4;
@@ -56,7 +55,7 @@ namespace PixmewStudios
 
         // --- Internal Variables ---
         private List<Vector3> pathPositions = new List<Vector3>();
-        private List<Quaternion> pathRotations = new List<Quaternion>();
+        private List<Quaternion> pathRotations = new List<Quaternion>(); // Kept for history, used if useTangentRotation is false
         private List<Transform> busSegments = new List<Transform>();
 
         private BusControls inputActions;
@@ -98,8 +97,6 @@ namespace PixmewStudios
             }
 
             lastPosition = transform.position;
-            
-            // Initialize drift direction to forward so we don't start sliding sideways instantly
             currentVelocityDir = transform.forward;
 
             if (Camera.main != null && Camera.main.transform.parent != null)
@@ -123,7 +120,6 @@ namespace PixmewStudios
             CheckGround();
             HandleHeadMovement();
 
-            // Perform Logic Checks
             CheckIfStuck();
             RecordPath();
             MoveBodySegments();
@@ -150,15 +146,13 @@ namespace PixmewStudios
         {
             Vector3 moveDirection = new Vector3(moveInput.x, 0, moveInput.y).normalized;
 
-            // --- 1. Rotation Logic (Steering) ---
-            // This rotates the visual model quickly.
+            // Rotation Logic (Visual Only)
             Quaternion targetLookRotation = transform.rotation;
             if (moveDirection.magnitude >= 0.1f)
             {
                 targetLookRotation = Quaternion.LookRotation(moveDirection);
             }
 
-            // Calculate Visual Pitch (Dolphin/Jump effect)
             float targetPitchAngle = 0f;
             if (!isGrounded)
             {
@@ -167,29 +161,23 @@ namespace PixmewStudios
             }
 
             Quaternion pitchRotation = Quaternion.Euler(targetPitchAngle, 0, 0);
-            
-            // Apply Rotation
             transform.rotation = Quaternion.Slerp(transform.rotation, targetLookRotation * pitchRotation, rotationSpeed * Time.deltaTime);
 
-
-            // --- 2. Drift / Velocity Logic (The New Part) ---
+            // DRIFT LOGIC
+            // We calculate drift, but we do NOT apply it to the transform.rotation directly
+            // transform.rotation is "Where I am looking"
+            // currentVelocityDir is "Where I am moving"
             
-            // Get the direction the bus is FACING
             Vector3 faceDir = transform.forward;
             faceDir.y = 0; 
             faceDir.Normalize();
 
-            // Instead of setting velocity instantly to faceDir, we LERP towards it.
-            // driftTraction determines how "grippy" the tires are.
-            // If traction is low, currentVelocityDir will lag behind faceDir (Drift).
             currentVelocityDir = Vector3.Lerp(currentVelocityDir, faceDir, driftTraction * Time.deltaTime);
             currentVelocityDir.Normalize();
 
-            // Calculate the actual movement vector based on the drift direction
             Vector3 forwardMovement = currentVelocityDir * moveSpeed;
 
-
-            // --- 3. Vertical Logic (Gravity) ---
+            // Vertical Logic
             if (isGrounded && verticalVelocity <= 0)
             {
                 verticalVelocity = 0;
@@ -205,7 +193,6 @@ namespace PixmewStudios
             Vector3 verticalMovement = Vector3.up * verticalVelocity;
             Vector3 finalVelocity = (forwardMovement + verticalMovement) * Time.deltaTime;
 
-            // 4. Apply Collision Logic
             MoveWithGrindingPhysics(finalVelocity);
         }
 
@@ -221,7 +208,6 @@ namespace PixmewStudios
             bool collisionDetected = false;
             Vector3 collisionNormal = Vector3.zero;
 
-            // CHECK 1: The Prediction Ray (SphereCast)
             if (Physics.SphereCast(origin, headCollisionRadius, direction, out hit, distance, obstacleMask))
             {
                 collisionDetected = true;
@@ -234,7 +220,6 @@ namespace PixmewStudios
                 }
             }
 
-            // CHECK 2: The "Gap Filler" (Overlap Check)
             if (!collisionDetected)
             {
                 Vector3 futurePos = origin + desiredMotion;
@@ -252,19 +237,15 @@ namespace PixmewStudios
                 }
             }
 
-            // --- RESOLUTION ---
             if (collisionDetected)
             {
                 Vector3 slideMotion = Vector3.ProjectOnPlane(desiredMotion, collisionNormal);
                 float grindFactor = 1f - wallGrindFriction;
                 slideMotion *= grindFactor;
                 
-                // If we hit a wall, we should align our drift momentum to the wall slide
-                // preventing us from sticking to the wall
                 if (slideMotion.magnitude > 0.001f)
                 {
                      currentVelocityDir = slideMotion.normalized;
-                     // Keep Y as 0 for the physics vector
                      currentVelocityDir.y = 0;
                 }
 
@@ -320,9 +301,10 @@ namespace PixmewStudios
 
         #endregion
 
-        #region Path & Segments (Standard)
+        #region Path & Segments (UPDATED)
         private void RecordPath()
         {
+            // We still record position and rotation, but we might ignore rotation later
             float distSqr = (pathPositions.Count > 0) ? (pathPositions[0] - transform.position).sqrMagnitude : 1f;
             if (distSqr > 0.0001f)
             {
@@ -357,16 +339,40 @@ namespace PixmewStudios
                 Vector3 pointA = pathPositions[i];
                 Vector3 pointB = pathPositions[i + 1];
                 float distBetweenPoints = Vector3.Distance(pointA, pointB);
+
                 if (currentDistTraveled + distBetweenPoints >= requiredDist)
                 {
                     float remainingDist = requiredDist - currentDistTraveled;
                     float t = remainingDist / distBetweenPoints;
+
+                    // 1. POSITION (Standard)
                     segment.position = Vector3.Lerp(pointA, pointB, t);
-                    segment.rotation = Quaternion.Slerp(pathRotations[i], pathRotations[i + 1], t);
+
+                    // 2. ROTATION (The Fix)
+                    if (useTangentRotation)
+                    {
+                        // Look at the point slightly ahead in history (towards the head)
+                        // pointA is newer (closer to head), pointB is older
+                        Vector3 lookDir = (pointA - pointB).normalized;
+                        if (lookDir != Vector3.zero)
+                        {
+                            Quaternion lookRot = Quaternion.LookRotation(lookDir);
+                            // Smoothly rotate towards the path direction
+                            segment.rotation = Quaternion.Slerp(segment.rotation, lookRot, 15f * Time.deltaTime);
+                        }
+                    }
+                    else
+                    {
+                        // Old "Snake" style - precise copy of head's rotation
+                        segment.rotation = Quaternion.Slerp(pathRotations[i], pathRotations[i + 1], t);
+                    }
+
                     return i;
                 }
                 currentDistTraveled += distBetweenPoints;
             }
+            
+            // Tail fallback
             if (pathPositions.Count > 0)
             {
                 segment.position = pathPositions.Last();
@@ -397,6 +403,7 @@ namespace PixmewStudios
             if (busSegmentPrefab == null) return;
             Transform lastSegment = busSegments.Last();
 
+            // Default spawn behind
             Vector3 backwardOffset = lastSegment.forward * segmentGap;
             Vector3 finalPos = lastSegment.position - backwardOffset;
 
@@ -416,17 +423,13 @@ namespace PixmewStudios
         public Vector3 RemoveLastSegment()
         {
             if (busSegments.Count <= 2) return Vector3.zero;
-
             int lastIndex = busSegments.Count - 1;
             Transform segmentToRemove = busSegments[lastIndex];
             Vector3 position = segmentToRemove.position;
-
             busSegments.RemoveAt(lastIndex);
-
             segmentToRemove.SetParent(null);
             segmentToRemove.DOScale(Vector3.zero, 0.3f)
                 .OnComplete(() => Destroy(segmentToRemove.gameObject));
-
             return position;
         }
 
@@ -434,6 +437,7 @@ namespace PixmewStudios
         {
             totalPassengersCollected++;
             if (totalPassengersCollected % passengersPerSegment == 0) AddBusSegment();
+            RefrenceHolder.Instance.gameProgressHandler.AddProgress(2);
         }
         #endregion
 
@@ -443,8 +447,6 @@ namespace PixmewStudios
             Gizmos.DrawLine(transform.position, transform.position + Vector3.down * (groundCheckOffset + 0.2f));
             Gizmos.color = Color.yellow;
             Gizmos.DrawWireSphere(transform.position, headCollisionRadius);
-
-            // Visualize drift
             Gizmos.color = Color.blue;
             Gizmos.DrawRay(transform.position, currentVelocityDir * 3f);
         }

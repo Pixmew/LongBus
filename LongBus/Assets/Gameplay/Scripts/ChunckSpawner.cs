@@ -27,7 +27,6 @@ namespace PixmewStudios
 
         private void SpawnMobs()
         {
-            Debug.Log("spawn");
             foreach (Transform point in spawnPoints)
             {
                 // Roll a single random number between 0.0 and 1.0
