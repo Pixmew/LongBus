@@ -13,6 +13,7 @@ namespace PixmewStudios
 
 
         [SerializeField] internal ProgressHandler gameProgressHandler;
+        [SerializeField] internal CameraController cameraController;
 
 
         void Awake()

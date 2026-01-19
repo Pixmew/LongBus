@@ -26,7 +26,7 @@ namespace PixmewStudios
                 // FLEE: Calculate a point in the opposite direction
                 Vector3 directionAway = (transform.position - threat.position).normalized;
                 Vector3 runTarget = transform.position + directionAway * 5f; // Run 5 meters away
-                
+
                 // Pass the "Run Speed" to override the default walk speed
                 MoveTowards(runTarget, runSpeed);
             }
@@ -44,28 +44,15 @@ namespace PixmewStudios
             return null;
         }
 
-        // --- BUS INTERACTION ---
-        
-        private void OnTriggerEnter(Collider other)
-        {
-            if (isSafe) return;
 
-            // Check if the Bus (specifically the collector part) hit us
-            BusController bus = other.GetComponentInParent<BusController>();
-            
-            if (bus != null)
-            {
-                GetSaved(bus);
-            }
-        }
-
-        private void GetSaved(BusController bus)
+        internal void GetSaved(BusController bus)
         {
+            if (isSafe || bus == null) return;
             isSafe = true;
 
             // 1. CRITICAL: Turn off the custom gravity/movement logic
             // This prevents the BaseAI from snapping the human back to the floor
-            DisablePhysics(); 
+            DisablePhysics();
 
             // 2. Logic: Grow the bus
             bus.CollectPassenger();
@@ -79,7 +66,7 @@ namespace PixmewStudios
 
         void OnDrawGizmos()
         {
-            Gizmos.color = new Color(0,1,0,0.5f);
+            Gizmos.color = new Color(0, 1, 0, 0.5f);
             Gizmos.DrawSphere(transform.position, detectionRadius);
         }
     }

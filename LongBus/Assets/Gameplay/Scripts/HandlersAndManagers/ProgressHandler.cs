@@ -66,14 +66,11 @@ namespace PixmewStudios
             {
                 _progressSlider.value = Mathf.Lerp(_progressSlider.value, _targetProgress, 0.1f);
                 UpdateProgressVisuals();
-                Debug.Log("step 1");
                 if (Mathf.Abs(_progressSlider.value - _progressSlider.maxValue) < 0.01f)
                 {
-                    Debug.Log("step 2");
                     _progressSlider.value = _progressSlider.maxValue;
                     if (maxProgressLevel <= 0 || _currentProgresLevel <= maxProgressLevel)
                     {
-                        Debug.Log("step 3");
                         IncreaseProgressLevel();
                         OnProgressLevelCompleted?.Invoke();
                     }

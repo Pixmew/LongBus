@@ -18,6 +18,7 @@ namespace PixmewStudios
         [Header("Wander Settings")]
         [SerializeField] protected float wanderInterval = 3f;
         [SerializeField] protected float wanderRadius = 5f;
+        [SerializeField] protected Rigidbody rigidbody;
 
         // Internal State
         protected Vector3 currentTarget;
@@ -28,6 +29,11 @@ namespace PixmewStudios
         protected float verticalVelocity;
         protected bool isGrounded;
         protected bool usePhysics = true; // Flag to disable movement when flying to bus
+
+        internal void Init()
+        {
+            rigidbody = GetComponent<Rigidbody>();
+        }
 
         protected virtual void Update()
         {
