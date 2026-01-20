@@ -27,7 +27,7 @@ namespace PixmewStudios
         Ground,
         Air,
         Road,
-        Building,
+        Concret,
 
     }
 }

@@ -522,7 +522,7 @@ Light:
     m_CustomResolution: -1
     m_Strength: 0.651
     m_Bias: 0
-    m_NormalBias: 0.37
+    m_NormalBias: 0
     m_NearPlane: 0.1
     m_CullingMatrixOverride:
       e00: 1
@@ -832,7 +832,7 @@ MonoBehaviour:
   chunkSize: 100
   drawDistance: 1
   chunkPrefabs:
-  - {fileID: 1562250357443938198, guid: 3965ad87baf6da24faffad3932809489, type: 3}
+  - {fileID: 1562250357443938198, guid: 659354c0033b0274f9b8b0015382f131, type: 3}
   worldContainer: {fileID: 1023776328}
 --- !u!4 &1023776328
 Transform:
