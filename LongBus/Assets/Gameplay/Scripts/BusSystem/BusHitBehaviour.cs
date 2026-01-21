@@ -10,6 +10,7 @@ namespace PixmewStudios
     {
         internal event Action<ZombieAI> onHitZombie;
         internal event Action<HumanAI> onHitHuman;
+        internal event Action<HitableObjectsBase> onHitHitableObject;
 
         private bool initilized;
 
@@ -23,6 +24,7 @@ namespace PixmewStudios
             yield return new WaitForSeconds(1);
             onHitHuman += OnHitHuman;
             onHitZombie += OnHitZombie;
+            onHitHitableObject += OnHitHitableObject;
             initilized = true;
         }
 
@@ -53,11 +55,20 @@ namespace PixmewStudios
                     onHitZombie?.Invoke(col.attachedRigidbody.GetComponent<ZombieAI>());
                 }
             }
+
+            colliders = Physics.OverlapSphere(transform.position, 1, ValueHolder.Instance.hitableLayer);
+
+            foreach (var col in colliders)
+            {
+                if (col.attachedRigidbody)
+                {
+                    onHitHitableObject?.Invoke(col.attachedRigidbody.transform.parent.GetComponent<HitableObjectsBase>());
+                }
+            }
         }
 
         internal void OnHitZombie(ZombieAI zombieAI)
         {
-            Debug.Log("Zombie HIT");
             zombieAI.Death(transform.position);
         }
 
@@ -66,10 +77,22 @@ namespace PixmewStudios
             humanAI.GetSaved(GetComponent<BusController>());
         }
 
+        internal void OnHitHitableObject(HitableObjectsBase hitableObject)
+        {
+            if (hitableObject == null)
+            {
+                return;
+            }
+            Debug.Log("HIT");
+            hitableObject.OnHit(transform.position);
+        }
+
+
+
         void OnDrawGizmos()
         {
             Gizmos.color = new Color(1, 0, 0, 0.5f);
-            Gizmos.DrawSphere(transform.position, 1);
+            Gizmos.DrawSphere(transform.position, 1f);
         }
     }
 }

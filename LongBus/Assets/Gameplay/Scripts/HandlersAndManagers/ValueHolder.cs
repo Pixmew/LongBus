@@ -14,6 +14,7 @@ namespace PixmewStudios
         [SerializeField] internal LayerMask busLayer;
         [SerializeField] internal LayerMask humanLayer;
         [SerializeField] internal LayerMask zombieLayer;
+        [SerializeField] internal LayerMask hitableLayer;
 
 
 

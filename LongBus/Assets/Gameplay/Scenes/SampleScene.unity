@@ -646,6 +646,9 @@ MonoBehaviour:
   zombieLayer:
     serializedVersion: 2
     m_Bits: 256
+  hitableLayer:
+    serializedVersion: 2
+    m_Bits: 1024
 --- !u!1 &830580899
 GameObject:
   m_ObjectHideFlags: 0
