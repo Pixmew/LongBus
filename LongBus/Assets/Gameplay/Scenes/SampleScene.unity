@@ -1145,6 +1145,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: BusHead
       objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: wallGrindFriction
+      value: 0.776
+      objectReference: {fileID: 0}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: obstacleMask.m_Bits
+      value: 1152
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

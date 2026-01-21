@@ -15,7 +15,7 @@ TagManager:
   - BusBody
   - Zombie
   - Human
-  - 
+  - HitableLayer
   - 
   - 
   - 
