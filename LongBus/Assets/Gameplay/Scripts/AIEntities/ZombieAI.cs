@@ -85,19 +85,31 @@ namespace PixmewStudios
 
         private void TryLatch(Transform targetSegment)
         {
-            //BusBodySegment segment = targetSegment.GetComponent<BusBodySegment>();
             BusBodySegment segment = targetSegment.GetComponentInParent<BusBodySegment>();
-Debug.Log(targetSegment.name);
             if (segment != null)
             {
-                Debug.Log("Latch..............");
                 isLatched = true;
                 DisablePhysics(); // Stop gravity and base movement
                 
                 segment.AddLatchedZombie(this);
                 
-                // Play a clinging animation (fallback to idle/walk if cling doesn't exist)
-                animator.SetTrigger("Die"); 
+                // Fix: Visually snap the zombie to the outside of the bus body bounds
+                Collider segCol = targetSegment.GetComponent<Collider>();
+                if (segCol != null)
+                {
+                    // Find the closest point on the bus collider's surface to the zombie's current position
+                    Vector3 closestPoint = segCol.ClosestPoint(transform.position);
+                    
+                    // Slightly offset outward from the surface so the zombie doesn't clip entirely inside
+                    Vector3 outwardDir = (closestPoint - segCol.bounds.center).normalized;
+                    transform.position = closestPoint + (outwardDir * 0.3f);
+                    
+                    // Look inward towards the bus body
+                    transform.rotation = Quaternion.LookRotation(-outwardDir);
+                }
+                
+                // Play an attack/cling animation if it exists, otherwise idle
+                animator.SetTrigger("Attack"); 
             }
         }
 
@@ -139,6 +151,10 @@ Debug.Log(targetSegment.name);
         {
             if (isDead) return;
             isDead = true;
+            
+            // Fix: Detach from the bus if latched and killed
+            transform.SetParent(null);
+            
             animator.SetTrigger("Die");
             rigidbody.isKinematic = false;
             this.enabled = false;
