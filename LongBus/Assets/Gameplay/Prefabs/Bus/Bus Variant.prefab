@@ -60,13 +60,29 @@ PrefabInstance:
       propertyPath: m_Name
       value: Bus Variant
       objectReference: {fileID: 0}
+    - target: {fileID: 5216642445737902438, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: busSegmentPrefab
       value: 
       objectReference: {fileID: 3363731209743680308, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+    - target: {fileID: 6795795972913057630, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7822436748943007387, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_IsTrigger
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8104687376769488748, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8848709278618478669, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}

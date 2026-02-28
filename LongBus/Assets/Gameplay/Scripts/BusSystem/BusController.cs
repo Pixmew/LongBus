@@ -19,6 +19,13 @@ namespace PixmewStudios
         [Tooltip("Low value = Ice/Drift (e.g. 2.0). High value = Grip (e.g. 15.0).")]
         [SerializeField] private float driftTraction = 3.5f; 
         private Vector3 currentVelocityDir; 
+        [Tooltip("How much slip angle triggers the skidmarks?")]
+        [SerializeField] private float driftVisualThreshold = 0.2f;
+        [Tooltip("Assign the existing TrailRenderers attached to the bus wheels here.")]
+        [SerializeField] private TrailRenderer[] skidmarkRenderers;
+        
+        // Skidmark state
+        private bool isDriftingVisually = false;
 
         [Header("Jump & Physics")]
         [SerializeField] private float jumpForce = 12f;
@@ -107,6 +114,14 @@ namespace PixmewStudios
 
         void Start()
         {
+            if (skidmarkRenderers != null)
+            {
+                foreach (var trail in skidmarkRenderers)
+                {
+                    if (trail != null) trail.emitting = false;
+                }
+            }
+
             StartCoroutine(SpawnInitialSegments(2));
         }
 
@@ -123,6 +138,49 @@ namespace PixmewStudios
             CheckIfStuck();
             RecordPath();
             MoveBodySegments();
+            
+            HandleSkidmarks();
+        }
+
+        private void HandleSkidmarks()
+        {
+            if (skidmarkRenderers == null || skidmarkRenderers.Length == 0) return;
+
+            // Calculate slip (difference between where we face horizontally and where we move)
+            Vector3 flatForward = transform.forward;
+            flatForward.y = 0;
+            flatForward.Normalize();
+
+            float moveSpeedMag = currentVelocityDir.magnitude * moveSpeed;
+            float slipAngle = 1f - Vector3.Dot(flatForward, currentVelocityDir);
+
+            // Turn on skidmarks if moving reasonably fast and slipping
+            bool shouldDrift = isGrounded && moveSpeedMag > 2f && slipAngle > driftVisualThreshold;
+
+            if (shouldDrift && !isDriftingVisually)
+            {
+                // Started drifting: Enable trail emission
+                isDriftingVisually = true;
+                foreach (var trail in skidmarkRenderers)
+                {
+                    if (trail != null) 
+                    {
+                        trail.emitting = true;
+                    }
+                }
+            }
+            else if (!shouldDrift && isDriftingVisually)
+            {
+                // Stopped drifting: Disable trail emission
+                isDriftingVisually = false;
+                foreach (var trail in skidmarkRenderers)
+                {
+                    if (trail != null) 
+                    {
+                        trail.emitting = false;
+                    }
+                }
+            }
         }
 
         #region Movement & Collision

@@ -123,5 +123,7 @@ namespace PixmewStudios
             }
             return tempMinMaxProgress;
         }
+
+        public int CurrentProgressLevel => _currentProgresLevel;
     }
 }

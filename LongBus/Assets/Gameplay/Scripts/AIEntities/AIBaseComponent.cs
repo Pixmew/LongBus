@@ -30,7 +30,7 @@ namespace PixmewStudios
         protected bool isGrounded;
         protected bool usePhysics = true; // Flag to disable movement when flying to bus
 
-        internal void Init()
+        internal virtual void Init()
         {
             rigidbody = GetComponent<Rigidbody>();
         }

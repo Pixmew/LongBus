@@ -32,6 +32,12 @@ namespace PixmewStudios
                 if (bus != null) playerTransform = bus.transform;
             }
 
+            // Ensure MobManager exists so manual setup isn't required in Editor
+            if (MobManager.Instance == null)
+            {
+                gameObject.AddComponent<MobManager>();
+            }
+
             // Initial spawn
             UpdateChunks();
         }

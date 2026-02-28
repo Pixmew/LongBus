@@ -693,6 +693,11 @@ Transform:
   m_Children: []
   m_Father: {fileID: 799198317}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!96 &845935331 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 3534953153923858332, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+  m_PrefabInstance: {fileID: 2006777223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &935299222 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
@@ -761,11 +766,11 @@ Camera:
     y: 0
     width: 1
     height: 1
-  near clip plane: 0.3
+  near clip plane: -5
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 30
+  orthographic: 1
+  orthographic size: 50
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -844,6 +849,60 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1023776326}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1063125373
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1063125375}
+  - component: {fileID: 1063125374}
+  m_Layer: 0
+  m_Name: MobManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1063125374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063125373}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ef50e1ce89d8a3419bf1d3608af6c33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  humanPrefab: {fileID: 3405203723905240494, guid: c3f282bf35eeb4f4b88d583f7823a738, type: 3}
+  zombiePrefab: {fileID: 873607911916305241, guid: 30b8ec6f8e95bb949a8f3fa29bdc5e91, type: 3}
+  maxActiveMobs: 30
+  minSpawnDistance: 25
+  maxSpawnDistance: 45
+  despawnDistance: 60
+  humanChance: 0.5
+  ambientSpawnInterval: 0.2
+  waveInterval: 5
+  baseWaveZombieCount: 20
+--- !u!4 &1063125375
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1063125373}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -973,14 +1032,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1627791098}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.5229762, y: -0, z: -0, w: 0.8523473}
+  m_LocalRotation: {x: 0.5, y: 0, z: 0, w: 0.8660254}
   m_LocalPosition: {x: 0, y: 15.2, z: -7.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 963194228}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 60, y: 0, z: 0}
 --- !u!1 &1701673140
 GameObject:
   m_ObjectHideFlags: 0
@@ -1056,6 +1115,16 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1701673140}
   m_CullTransparentMesh: 1
+--- !u!96 &1803736350 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 6689254879987588260, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+  m_PrefabInstance: {fileID: 2006777223}
+  m_PrefabAsset: {fileID: 0}
+--- !u!96 &1952579564 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 6805241568164125477, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+  m_PrefabInstance: {fileID: 2006777223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1952678851
 GameObject:
   m_ObjectHideFlags: 0
@@ -1100,10 +1169,6 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 1233153550688332566, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 2459341578080360472, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0
@@ -1149,18 +1214,35 @@ PrefabInstance:
       value: BusHead
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: wallGrindFriction
-      value: 0.776
+      propertyPath: skidmarkRenderers.Array.size
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
-      propertyPath: obstacleMask.m_Bits
-      value: 1152
-      objectReference: {fileID: 0}
+      propertyPath: skidmarkRenderers.Array.data[0]
+      value: 
+      objectReference: {fileID: 1803736350}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: skidmarkRenderers.Array.data[1]
+      value: 
+      objectReference: {fileID: 2027346610}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: skidmarkRenderers.Array.data[2]
+      value: 
+      objectReference: {fileID: 1952579564}
+    - target: {fileID: 5358076961612263303, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+      propertyPath: skidmarkRenderers.Array.data[3]
+      value: 
+      objectReference: {fileID: 845935331}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+--- !u!96 &2027346610 stripped
+TrailRenderer:
+  m_CorrespondingSourceObject: {fileID: 3163090045064557764, guid: caca6b7cb335f624797d7440c8c50d1d, type: 3}
+  m_PrefabInstance: {fileID: 2006777223}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &2051403043
 GameObject:
   m_ObjectHideFlags: 0
@@ -1381,3 +1463,4 @@ SceneRoots:
   - {fileID: 1023776328}
   - {fileID: 581616238}
   - {fileID: 389409514}
+  - {fileID: 1063125375}

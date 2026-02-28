@@ -12,21 +12,46 @@ namespace PixmewStudios
         [SerializeField] private Animator animator;
         [SerializeField] private bool isDead;
 
+        private float currentRunSpeed;
+
+        private Transform busTransform;
+
+        internal override void Init()
+        {
+            base.Init();
+            currentRunSpeed = runSpeed;
+            if (busTransform == null)
+            {
+                var bus = FindObjectOfType<BusController>();
+                if (bus != null) busTransform = bus.transform;
+            }
+        }
+
+        internal void InitWithSpeed(float speedMultiplier)
+        {
+            base.Init();
+            currentRunSpeed = runSpeed * speedMultiplier;
+            if (busTransform == null)
+            {
+                var bus = FindObjectOfType<BusController>();
+                if (bus != null) busTransform = bus.transform;
+            }
+        }
+
         protected override void Think()
         {
-            Transform target = FindNearestHuman();
+            Transform target = FindTarget();
 
             if (target != null)
             {
-                // CHASE: Just tell the BaseAI where the human is right now.
-                // Since we use vector math, this is super cheap to call every frame.
-                MoveTowards(target.position, runSpeed);
+                // CHASE: Tell the BaseAI where the target is right now.
+                MoveTowards(target.position, currentRunSpeed);
                 animator.SetTrigger("Run");
                 animator.SetInteger("RunType", UnityEngine.Random.Range(0, 2));
             }
             else
             {
-                // IDLE: No humans? Just pick random spots.
+                // IDLE: pick random spots.
                 Wander(walkSpeed);
                 if (wanderTimer <= 0)
                 {
@@ -39,14 +64,13 @@ namespace PixmewStudios
             }
         }
 
-        private Transform FindNearestHuman()
+        private Transform FindTarget()
         {
-            // Simple overlap check to find nearby colliders on the "Human" layer
-            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, humanLayer);
-
             Transform bestTarget = null;
             float closestDist = Mathf.Infinity;
 
+            // 1. Check for nearby humans
+            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, humanLayer);
             foreach (var hit in hits)
             {
                 float dist = Vector3.Distance(transform.position, hit.transform.position);
@@ -56,6 +80,18 @@ namespace PixmewStudios
                     bestTarget = hit.transform;
                 }
             }
+
+            // 2. Check for the bus
+            if (busTransform != null)
+            {
+                float busDist = Vector3.Distance(transform.position, busTransform.position);
+                // If the bus is closer than the nearest human AND within detection range, chase it
+                if (busDist < closestDist && busDist <= detectionRadius)
+                {
+                    bestTarget = busTransform;
+                }
+            }
+
             return bestTarget;
         }
 
@@ -63,7 +99,7 @@ namespace PixmewStudios
         {
             if (isDead) return;
             isDead = true;
-
+            animator.SetTrigger("Die");
             rigidbody.isKinematic = false;
             this.enabled = false;
             rigidbody.AddExplosionForce(10, hitpoint, 5f , 1 , ForceMode.Impulse);
