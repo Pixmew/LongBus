@@ -142,6 +142,9 @@ namespace PixmewStudios
             // Disable collider
             Collider col = GetComponent<Collider>();
             if (col != null) col.enabled = false;
+            
+            // Disable physics simulation to prevent anchoring the parent object!
+            if (rigidbody != null) rigidbody.isKinematic = true;
         }
     }
 }

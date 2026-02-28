@@ -15,6 +15,14 @@ namespace PixmewStudios
         [SerializeField] internal float boostRampDuration = 0.2f;
         [SerializeField] private float rotationSpeed = 100f;
 
+        [Header("Latching Penalties")]
+        [SerializeField] private float jumpDisabledPenaltyThreshold = 5; 
+        [SerializeField] private float speedPenaltyPerZombie = 0.3f;
+        private int totalLatchedZombies = 0;
+
+        // Public property to detect drifting for score multiplying
+        public bool IsDrifting { get; private set; }
+
         [Header("Drift Settings")]
         [Tooltip("Low value = Ice/Drift (e.g. 2.0). High value = Grip (e.g. 15.0).")]
         [SerializeField] private float driftTraction = 3.5f; 
@@ -132,6 +140,8 @@ namespace PixmewStudios
         {
             if (isDead) return;
 
+            UpdateLatchedZombiesCount();
+
             CheckGround();
             HandleHeadMovement();
 
@@ -140,6 +150,39 @@ namespace PixmewStudios
             MoveBodySegments();
             
             HandleSkidmarks();
+
+            // Handle continuous boost drain
+            if (isBoosting && ScoreManager.Instance != null && !ScoreManager.Instance.ConsumeBoost(Time.deltaTime))
+            {
+                // Ran out of boost! Force stop.
+                StopBoost();
+            }
+        }
+
+        private void UpdateLatchedZombiesCount()
+        {
+            totalLatchedZombies = 0;
+            foreach (var seg in busSegments)
+            {
+                var body = seg.GetComponent<BusBodySegment>();
+                if (body != null)
+                {
+                    totalLatchedZombies += body.latchedZombies.Count;
+                }
+            }
+
+            // Apply penalty
+            float targetSpeed = isBoosting ? boostedmoveSpeed : normalmoveSpeed;
+            float rawPenalty = totalLatchedZombies * speedPenaltyPerZombie;
+            
+            // Prevent going backwards, keep a tiny minimum speed unless completely swamped
+            moveSpeed = Mathf.Max(2f, targetSpeed - rawPenalty);
+
+            // Trigger game over strictly if fully stuck
+            if (totalLatchedZombies > 15 && moveSpeed <= 2.1f)
+            {
+                TriggerGameOver();
+            }
         }
 
         private void HandleSkidmarks()
@@ -156,6 +199,8 @@ namespace PixmewStudios
 
             // Turn on skidmarks if moving reasonably fast and slipping
             bool shouldDrift = isGrounded && moveSpeedMag > 2f && slipAngle > driftVisualThreshold;
+            
+            IsDrifting = shouldDrift;
 
             if (shouldDrift && !isDriftingVisually)
             {
@@ -192,7 +237,7 @@ namespace PixmewStudios
 
         private void Jump()
         {
-            if (isGrounded)
+            if (isGrounded && totalLatchedZombies < jumpDisabledPenaltyThreshold)
             {
                 verticalVelocity = jumpForce;
                 isGrounded = false;
@@ -265,16 +310,21 @@ namespace PixmewStudios
             RaycastHit hit;
             bool collisionDetected = false;
             Vector3 collisionNormal = Vector3.zero;
+            Vector3 scrapePoint = Vector3.zero;
 
             if (Physics.SphereCast(origin, headCollisionRadius, direction, out hit, distance, obstacleMask))
             {
-                collisionDetected = true;
-                collisionNormal = hit.normal;
-
-                BusBodySegment segment = hit.collider.GetComponent<BusBodySegment>();
-                if (segment != null && segment.segmentIndex <= safeSegmentCount)
+                if (hit.collider.gameObject != gameObject)
                 {
-                    collisionDetected = false; 
+                    collisionDetected = true;
+                    collisionNormal = hit.normal;
+                    scrapePoint = hit.point;
+
+                    BusBodySegment segment = hit.collider.GetComponent<BusBodySegment>();
+                    if (segment != null && segment.segmentIndex <= safeSegmentCount)
+                    {
+                        collisionDetected = false; 
+                    }
                 }
             }
 
@@ -285,11 +335,14 @@ namespace PixmewStudios
 
                 foreach (var col in overlaps)
                 {
+                    if (col.gameObject == gameObject) continue;
+
                     BusBodySegment segment = col.GetComponent<BusBodySegment>();
                     if (segment == null || segment.segmentIndex > safeSegmentCount)
                     {
                         collisionDetected = true;
                         collisionNormal = -direction;
+                        scrapePoint = col.ClosestPoint(transform.position);
                         break;
                     }
                 }
@@ -297,6 +350,10 @@ namespace PixmewStudios
 
             if (collisionDetected)
             {
+                // Scrape zombies off the head when grinding
+                var headSegment = GetComponent<BusBodySegment>();
+                if (headSegment != null && scrapePoint != Vector3.zero) headSegment.ScrapeOffZombies(scrapePoint);
+
                 Vector3 slideMotion = Vector3.ProjectOnPlane(desiredMotion, collisionNormal);
                 float grindFactor = 1f - wallGrindFriction;
                 slideMotion *= grindFactor;
@@ -440,9 +497,15 @@ namespace PixmewStudios
             return 0;
         }
 
+
+
         private void StartBoost()
         {
             if (isBoosting) return;
+
+            // Only boost if we have enough meter
+            if (ScoreManager.Instance == null || !ScoreManager.Instance.CanBoost()) return;
+
             isBoosting = true;
             speedTween?.Kill();
             speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, boostedmoveSpeed, boostRampDuration).SetEase(Ease.InOutQuad);
@@ -451,9 +514,11 @@ namespace PixmewStudios
 
         private void StopBoost()
         {
+            if (!isBoosting) return;
+            isBoosting = false;
             speedTween?.Kill();
             speedTween = DOTween.To(() => moveSpeed, x => moveSpeed = x, normalmoveSpeed, boostRampDuration).SetEase(Ease.OutQuad)
-                .OnComplete(() => { if (cameraController != null) cameraController.StopShake(); isBoosting = false; });
+                .OnComplete(() => { if (cameraController != null) cameraController.StopShake(); });
         }
 
         public void AddBusSegment(bool isInitial = false)

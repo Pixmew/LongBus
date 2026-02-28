@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 3859987866165173835}
   - component: {fileID: 9207527390632569208}
   - component: {fileID: 7822436748943007387}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: HitBox
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -247,6 +247,8 @@ MonoBehaviour:
   boostedmoveSpeed: 10
   boostRampDuration: 0.2
   rotationSpeed: 3
+  jumpDisabledPenaltyThreshold: 5
+  speedPenaltyPerZombie: 0.3
   driftTraction: 3.5
   driftVisualThreshold: 0.2
   skidmarkRenderers:
@@ -263,7 +265,7 @@ MonoBehaviour:
   obstacleMask:
     serializedVersion: 2
     m_Bits: 1152
-  headCollisionRadius: 0.2
+  headCollisionRadius: 0.1
   wallGrindFriction: 0.776
   maxStuckTime: 5
   dolphinPitchCurve:

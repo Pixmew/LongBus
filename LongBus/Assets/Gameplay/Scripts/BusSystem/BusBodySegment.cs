@@ -10,6 +10,32 @@ namespace PixmewStudios
         [SerializeField] internal Transform visuals;
         [SerializeField] internal int segmentIndex; 
 
+        // Latched zombie logic
+        internal System.Collections.Generic.List<ZombieAI> latchedZombies = new System.Collections.Generic.List<ZombieAI>();
+
+        public void AddLatchedZombie(ZombieAI zombie)
+        {
+            if (!latchedZombies.Contains(zombie))
+            {
+                latchedZombies.Add(zombie);
+                zombie.transform.SetParent(visuals != null ? visuals : transform);
+            }
+        }
+
+        public void ScrapeOffZombies(Vector3 scrapePoint)
+        {
+            // Kill and detach all zombies currently latched to this segment
+            foreach (var zombie in latchedZombies)
+            {
+                if (zombie != null)
+                {
+                    zombie.transform.SetParent(null);
+                    zombie.Death(scrapePoint);
+                }
+            }
+            latchedZombies.Clear();
+        }
+
         internal void PlaySpawnAnimation(float dropHeight = 10f)
         {
             if (visuals == null)

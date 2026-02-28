@@ -9,6 +9,7 @@ namespace PixmewStudios
         [SerializeField] private float walkSpeed = 2f;
         [SerializeField] private float runSpeed = 3f;
         [SerializeField] private LayerMask humanLayer; // Set this to Layer 6 (Human)
+        [SerializeField] private LayerMask busLayer;
         [SerializeField] private Animator animator;
         [SerializeField] private bool isDead;
 
@@ -38,12 +39,30 @@ namespace PixmewStudios
             }
         }
 
+        [Header("Latching")]
+        [SerializeField] private float latchDistance = 1.5f;
+        private bool isLatched = false;
+
         protected override void Think()
         {
+            if (isLatched) return;
+
             Transform target = FindTarget();
 
             if (target != null)
             {
+                // If the target is a BusBodySegment (or head) and we're close enough, try latching
+                if (target == busTransform || target.GetComponentInParent<BusBodySegment>() != null)
+                {
+                    float dist = Vector3.Distance(transform.position, target.position);
+                    if (dist <= latchDistance)
+                    {
+                        Debug.Log("Latching!");
+                        TryLatch(target);
+                        return;
+                    }
+                }
+
                 // CHASE: Tell the BaseAI where the target is right now.
                 MoveTowards(target.position, currentRunSpeed);
                 animator.SetTrigger("Run");
@@ -64,13 +83,34 @@ namespace PixmewStudios
             }
         }
 
+        private void TryLatch(Transform targetSegment)
+        {
+            //BusBodySegment segment = targetSegment.GetComponent<BusBodySegment>();
+            BusBodySegment segment = targetSegment.GetComponentInParent<BusBodySegment>();
+Debug.Log(targetSegment.name);
+            if (segment != null)
+            {
+                Debug.Log("Latch..............");
+                isLatched = true;
+                DisablePhysics(); // Stop gravity and base movement
+                
+                segment.AddLatchedZombie(this);
+                
+                // Play a clinging animation (fallback to idle/walk if cling doesn't exist)
+                animator.SetTrigger("Die"); 
+            }
+        }
+
         private Transform FindTarget()
         {
             Transform bestTarget = null;
             float closestDist = Mathf.Infinity;
 
-            // 1. Check for nearby humans
-            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, humanLayer);
+            // Combine Human layer with the BusBody layer
+            int searchMask = humanLayer.value | busLayer;
+
+            // 1. Check for nearby targets (Humans and Bus Segments)
+            Collider[] hits = Physics.OverlapSphere(transform.position, detectionRadius, searchMask);
             foreach (var hit in hits)
             {
                 float dist = Vector3.Distance(transform.position, hit.transform.position);
@@ -81,16 +121,16 @@ namespace PixmewStudios
                 }
             }
 
-            // 2. Check for the bus
-            if (busTransform != null)
-            {
-                float busDist = Vector3.Distance(transform.position, busTransform.position);
-                // If the bus is closer than the nearest human AND within detection range, chase it
-                if (busDist < closestDist && busDist <= detectionRadius)
-                {
-                    bestTarget = busTransform;
-                }
-            }
+            // // 2. Fallback to main bus transform (in case head isn't on BusBody layer)
+            // if (busTransform != null)
+            // {
+            //     float busDist = Vector3.Distance(transform.position, busTransform.position);
+            //     // If the bus head is closer than the nearest target AND within detection range, chase it
+            //     if (busDist < closestDist && busDist <= detectionRadius)
+            //     {
+            //         bestTarget = busTransform;
+            //     }
+            // }
 
             return bestTarget;
         }
@@ -104,6 +144,19 @@ namespace PixmewStudios
             this.enabled = false;
             rigidbody.AddExplosionForce(10, hitpoint, 5f , 1 , ForceMode.Impulse);
             RefrenceHolder.Instance.cameraController.TriggerShake(0.2f , 0.2f);
+            
+            // Score Integration
+            if (ScoreManager.Instance != null)
+            {
+                bool drifting = false;
+                if (busTransform != null)
+                {
+                    BusController bus = busTransform.GetComponent<BusController>();
+                    if (bus != null) drifting = bus.IsDrifting;
+                }
+                
+                ScoreManager.Instance.AddScore(5, drifting);
+            }
         }
 
         void OnDrawGizmos()

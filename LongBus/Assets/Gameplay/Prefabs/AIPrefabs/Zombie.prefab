@@ -56,12 +56,18 @@ MonoBehaviour:
   groundOffset: 0
   wanderInterval: 3
   wanderRadius: 5
+  rigidbody: {fileID: 0}
   walkSpeed: 1
   runSpeed: 2.1
   humanLayer:
     serializedVersion: 2
     m_Bits: 512
+  busLayer:
+    serializedVersion: 2
+    m_Bits: 128
   animator: {fileID: 8676703176415679943}
+  isDead: 0
+  latchDistance: 5
 --- !u!54 &1333350518698050055
 Rigidbody:
   m_ObjectHideFlags: 0
